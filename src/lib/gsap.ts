@@ -1,19 +1,9 @@
 "use client";
 
 import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useGSAP } from "@gsap/react";
 
-export const fadeUp = (element: string) => {
-  gsap.fromTo(
-    element,
-    {
-      opacity: 0,
-      y: 40,
-    },
-    {
-      opacity: 1,
-      y: 0,
-      duration: 1,
-      ease: "power4.out",
-    }
-  );
-};
+gsap.registerPlugin(ScrollTrigger, useGSAP);
+
+export { gsap, ScrollTrigger, useGSAP };
