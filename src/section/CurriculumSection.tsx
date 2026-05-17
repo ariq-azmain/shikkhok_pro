@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -148,6 +149,7 @@ export default function CurriculumSection() {
               Using a custom curriculum or textbook? Add custom prompts and our AI adapts instantly.
             </p>
           </div>
+          <Link href="/sign-in">
           <span
             className="flex-shrink-0 px-5 py-2.5 rounded-xl text-sm font-semibold text-white whitespace-nowrap"
             style={{
@@ -156,6 +158,7 @@ export default function CurriculumSection() {
           >
             Try it Free
           </span>
+          </Link>
         </div>
       </div>
     </section>
