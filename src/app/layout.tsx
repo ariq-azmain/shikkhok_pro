@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 import { Inter } from "next/font/google";
 import "./globals.css";
 
@@ -37,7 +38,13 @@ export default function RootLayout({
     return (
         <html lang="en" className="dark">
             <body className={`${inter.variable} antialiased`}>
-                <ClerkProvider>{children}</ClerkProvider>
+                <ClerkProvider
+                    appearance={{
+                        baseTheme: dark
+                    }}
+                >
+                    {children}
+                </ClerkProvider>
             </body>
         </html>
     );
