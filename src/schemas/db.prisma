@@ -1,0 +1,218 @@
+// ইউজার
+model User {
+  id            String   @id @default(cuid())
+  clerkId       String   @unique
+  username      String   @unique
+  displayName   String
+  email         String   @unique
+  avatar        String?
+  bio           String?
+  role          GlobalRole @default(STUDENT)
+  createdAt     DateTime @default(now())
+
+  // Relations
+  orgMemberships  OrgMember[]
+  questions       Question[]
+  likes           Like[]
+  comments        Comment[]
+  sentMessages    Message[]
+  receivedMessages Message[]
+  tasks           Task[]
+  notifications   Notification[]
+}
+
+// অর্গানাইজেশন (স্কুল/কলেজ)
+model Organization {
+  id          String   @id @default(cuid())
+  name        String
+  nameEn      String?
+  slug        String   @unique
+  logo        String?
+  description String?
+  address     String?
+  type        OrgType  // SCHOOL | COLLEGE | COACHING
+  createdAt   DateTime @default(now())
+
+  // Relations
+  members       OrgMember[]
+  questionBanks QuestionBank[]
+  notices       Notice[]
+  tasks         Task[]
+  invitations   Invitation[]
+}
+
+// অর্গানাইজেশন মেম্বার
+model OrgMember {
+  id        String    @id @default(cuid())
+  userId    String
+  orgId     String
+  role      OrgRole   // ORG_OWNER | ORG_ADMIN | TEACHER
+  subject   String[]  // কোন কোন বিষয়ের শিক্ষক
+  joinedAt  DateTime  @default(now())
+
+  user  User         @relation(fields: [userId], references: [id])
+  org   Organization @relation(fields: [orgId], references: [id])
+
+  @@unique([userId, orgId])
+}
+
+// ইনভিটেশন
+model Invitation {
+  id          String    @id @default(cuid())
+  orgId       String
+  invitedBy   String
+  username    String    // ইউজারনেম দিয়ে ইনভাইট
+  role        OrgRole
+  status      InviteStatus @default(PENDING) // PENDING | ACCEPTED | REJECTED
+  expiresAt   DateTime
+  createdAt   DateTime  @default(now())
+
+  org Organization @relation(fields: [orgId], references: [id])
+}
+
+// প্রশ্ন ব্যাংক
+model QuestionBank {
+  id          String   @id @default(cuid())
+  orgId       String
+  name        String
+  nameEn      String?
+  description String?
+  subject     String   // বাংলা, ইংরেজি, গণিত...
+  className   String   // Class-1, SSC, HSC...
+  createdBy   String
+  createdAt   DateTime @default(now())
+
+  org       Organization @relation(fields: [orgId], references: [id])
+  questions Question[]
+}
+
+// প্রশ্নপত্র
+model Question {
+  id              String         @id @default(cuid())
+  bankId          String?
+  createdBy       String
+  orgId           String?
+
+  // প্রশ্নের বিবরণ
+  title           String
+  content         Json           // প্রশ্নের structured data
+  subject         String
+  className       String
+  chapter         String?
+  topic           String?
+  difficulty      Difficulty     // EASY | MEDIUM | HARD | MIXED
+  questionType    QuestionType[] // MCQ | WRITTEN | SHORT | CREATIVE
+  totalMarks      Int
+  timeMinutes     Int?
+
+  // ভিজিবিলিটি
+  visibility      Visibility     // PUBLIC | SCHOOL | PRIVATE
+
+  // AI মেটাডাটা
+  aiGenerated     Boolean        @default(true)
+  aiModel         String?
+  customPrompt    String?
+  syllabus        String?
+
+  // সোশ্যাল
+  likesCount      Int            @default(0)
+  commentsCount   Int            @default(0)
+  sharesCount     Int            @default(0)
+  viewsCount      Int            @default(0)
+
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  // Relations
+  bank      QuestionBank? @relation(fields: [bankId], references: [id])
+  creator   User         @relation(fields: [createdBy], references: [id])
+  likes     Like[]
+  comments  Comment[]
+  shares    Share[]
+  tags      QuestionTag[]
+}
+
+// লাইক
+model Like {
+  id         String   @id @default(cuid())
+  userId     String
+  questionId String
+  createdAt  DateTime @default(now())
+
+  user     User     @relation(fields: [userId], references: [id])
+  question Question @relation(fields: [questionId], references: [id])
+
+  @@unique([userId, questionId])
+}
+
+// কমেন্ট
+model Comment {
+  id         String    @id @default(cuid())
+  userId     String
+  questionId String
+  content    String
+  parentId   String?   // nested reply
+  createdAt  DateTime  @default(now())
+
+  user     User      @relation(fields: [userId], references: [id])
+  question Question  @relation(fields: [questionId], references: [id])
+  parent   Comment?  @relation("Replies", fields: [parentId], references: [id])
+  replies  Comment[] @relation("Replies")
+}
+
+// মেসেজ (চ্যাট)
+model Message {
+  id          String      @id @default(cuid())
+  senderId    String
+  receiverId  String
+  orgId       String?
+  content     String
+  isRead      Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+
+  sender   User @relation("SentMessages", fields: [senderId], references: [id])
+  receiver User @relation("ReceivedMessages", fields: [receiverId], references: [id])
+}
+
+// নোটিশ বোর্ড
+model Notice {
+  id          String   @id @default(cuid())
+  orgId       String
+  title       String
+  content     String
+  postedBy    String
+  isImportant Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  org Organization @relation(fields: [orgId], references: [id])
+}
+
+// টাস্ক ম্যানেজার
+model Task {
+  id            String     @id @default(cuid())
+  orgId         String
+  assignedTo    String
+  assignedBy    String
+  title         String
+  description   String?
+  subject       String
+  className     String
+  dueDate       DateTime?
+  status        TaskStatus // PENDING | IN_PROGRESS | SUBMITTED | APPROVED | REJECTED
+  submittedQuestionId String?  // সাবমিট করা প্রশ্নের ID
+  feedback      String?
+  createdAt     DateTime   @default(now())
+
+  org  Organization @relation(fields: [orgId], references: [id])
+  user User         @relation(fields: [assignedTo], references: [id])
+}
+
+// Enums
+enum GlobalRole   { SUPER_ADMIN USER }
+enum OrgRole      { ORG_OWNER ORG_ADMIN TEACHER }
+enum OrgType      { SCHOOL COLLEGE COACHING MADRASA OTHER }
+enum Visibility   { PUBLIC SCHOOL PRIVATE }
+enum Difficulty   { EASY MEDIUM HARD MIXED }
+enum TaskStatus   { PENDING IN_PROGRESS SUBMITTED APPROVED REJECTED }
+enum InviteStatus { PENDING ACCEPTED REJECTED EXPIRED }
+enum QuestionType { MCQ SHORT_ANSWER WRITTEN CREATIVE FILL_BLANK TRUE_FALSE }
