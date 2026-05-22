@@ -8,12 +8,9 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  // Supabase connection pooler (pgBouncer) — runtime queries এর জন্য
-  url       = env("DATABASE_URL")
-  // Supabase direct connection — prisma migrate এর জন্য
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
 }
+
 
 // ============================================================
 // ENUMS
