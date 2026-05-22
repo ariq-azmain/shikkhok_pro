@@ -87,7 +87,7 @@ model User {
   email       String      @unique
   avatar      String?
   bio         String?
-  accountType AccountType @default(STUDENT)
+  accountType AccountType @default(TEACHER)
   deletedAt   DateTime?
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
