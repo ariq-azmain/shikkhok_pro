@@ -1,45 +1,21 @@
 // src/app/api/webhooks/clerk/route.ts
-// ---------------------------------------------------------------
-// Clerk Webhook Handler
-// Clerk এ user তৈরি/আপডেট/মুছলে DB sync হয়।
-//
-// Setup:
-// 1. Clerk Dashboard > Webhooks > Add Endpoint
-// 2. URL: https://yourdomain.com/api/webhooks/clerk
-// 3. Events: user.created, user.updated, user.deleted
-// 4. Signing Secret → CLERK_WEBHOOK_SECRET এ দাও
-// ---------------------------------------------------------------
-
 import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { Webhook } from "svix";
-import { prisma } from "@/lib/prisma";
+import { createClient } from "@supabase/supabase-js";
 
-type ClerkUserData = {
-  id: string;
-  email_addresses: { email_address: string; id: string }[];
-  primary_email_address_id: string;
-  first_name: string | null;
-  last_name: string | null;
-  image_url: string;
-  username: string | null;
-};
-
-type WebhookEvent = {
-  type: "user.created" | "user.updated" | "user.deleted";
-  data: ClerkUserData;
-};
+// Supabase service role client — server only
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
 
 export async function POST(req: Request) {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
   if (!WEBHOOK_SECRET) {
-    return NextResponse.json(
-      { error: "CLERK_WEBHOOK_SECRET is not set" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Missing webhook secret" }, { status: 500 });
   }
 
-  // svix signature headers
   const headerPayload = await headers();
   const svix_id = headerPayload.get("svix-id");
   const svix_timestamp = headerPayload.get("svix-timestamp");
@@ -52,28 +28,26 @@ export async function POST(req: Request) {
   const payload = await req.json();
   const body = JSON.stringify(payload);
 
-  // Signature verify করো
   const wh = new Webhook(WEBHOOK_SECRET);
-  let event: WebhookEvent;
+  let event: any;
 
   try {
     event = wh.verify(body, {
       "svix-id": svix_id,
       "svix-timestamp": svix_timestamp,
       "svix-signature": svix_signature,
-    }) as WebhookEvent;
+    });
   } catch {
     return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
 
   const { type, data } = event;
 
-  // Primary email বের করো
-  const primaryEmail = data.email_addresses.find(
-    (e) => e.id === data.primary_email_address_id
+  const primaryEmail = data.email_addresses?.find(
+    (e: any) => e.id === data.primary_email_address_id
   )?.email_address;
 
-  if (!primaryEmail) {
+  if (!primaryEmail && type !== "user.deleted") {
     return NextResponse.json({ error: "No primary email" }, { status: 400 });
   }
 
@@ -82,47 +56,45 @@ export async function POST(req: Request) {
     data.username ||
     "User";
 
-  // Username: Clerk username থাকলে সেটা, না থাকলে email prefix
   const username =
-    data.username ?? primaryEmail.split("@")[0].toLowerCase().replace(/[^a-z0-9_]/g, "_");
+    data.username ??
+    primaryEmail?.split("@")[0].toLowerCase().replace(/[^a-z0-9_]/g, "_");
 
   try {
-    switch (type) {
-      case "user.created":
-        await prisma.user.create({
-          data: {
-            clerkId: data.id,
-            email: primaryEmail,
-            displayName,
-            avatar: data.image_url,
-            username,
-          },
-        });
-        break;
+    if (type === "user.created") {
+      const { error } = await supabase.from("users").insert({
+        clerkId: data.id,
+        email: primaryEmail,
+        displayName,
+        avatar: data.image_url,
+        username,
+        accountType: "STUDENT",
+      });
+      if (error) throw error;
+    }
 
-      case "user.updated":
-        await prisma.user.update({
-          where: { clerkId: data.id },
-          data: {
-            email: primaryEmail,
-            displayName,
-            avatar: data.image_url,
-          },
-        });
-        break;
+    if (type === "user.updated") {
+      const { error } = await supabase
+        .from("users")
+        .update({ email: primaryEmail, displayName, avatar: data.image_url })
+        .eq("clerkId", data.id);
+      if (error) throw error;
+    }
 
-      case "user.deleted":
-        // Soft delete — hard delete চাইলে deleteMany ব্যবহার করো
-        await prisma.user.update({
-          where: { clerkId: data.id },
-          data: { deletedAt: new Date() },
-        });
-        break;
+    if (type === "user.deleted") {
+      const { error } = await supabase
+        .from("users")
+        .update({ deletedAt: new Date().toISOString() })
+        .eq("clerkId", data.id);
+      if (error) throw error;
     }
 
     return NextResponse.json({ success: true });
-  } catch (error) {
-    console.error("[Clerk Webhook Error]", error);
-    return NextResponse.json({ error: "DB operation failed", e: error }, { status: 500 });
+  } catch (error: any) {
+    console.error("[Webhook Error]", error);
+    return NextResponse.json(
+      { error: "DB operation failed", detail: error.message },
+      { status: 500 }
+    );
   }
 }
