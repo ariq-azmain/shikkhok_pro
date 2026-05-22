@@ -123,6 +123,6 @@ export async function POST(req: Request) {
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("[Clerk Webhook Error]", error);
-    return NextResponse.json({ error: "DB operation failed", e: error }, { status: 500 });
+    return NextResponse.json({ error: "DB operation failed" }, { status: 500 });
   }
 }
