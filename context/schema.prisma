@@ -1,15 +1,23 @@
+// ============================================================
+// Shikkhok Pro — Prisma Schema
+// DB: Supabase PostgreSQL
+// ============================================================
+
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql" // Postgres হলে বেস্ট। MongoDB হলে কিছু @@index বদলাবে
-  url = env("NEXT_PUBLIC_SUPABASE_URL")
+  provider  = "postgresql"
+  // Supabase connection pooler (pgBouncer) — runtime queries এর জন্য
+  url       = env("DATABASE_URL")
+  // Supabase direct connection — prisma migrate এর জন্য
+  directUrl = env("DIRECT_URL")
 }
 
-// ====================
+// ============================================================
 // ENUMS
-// ====================
+// ============================================================
 
 enum AccountType {
   TEACHER
@@ -70,247 +78,263 @@ enum NotificationType {
   QUESTION_LIKED
 }
 
-// ====================
+// ============================================================
 // USER & ORG
-// ====================
+// ============================================================
 
 model User {
-  id String @id @default(cuid())
-  clerkId String @unique
-  username String @unique
+  id          String      @id @default(cuid())
+  clerkId     String      @unique
+  username    String      @unique
   displayName String
-  email String @unique
-  avatar String?
-  bio String?
+  email       String      @unique
+  avatar      String?
+  bio         String?
   accountType AccountType @default(STUDENT)
-  deletedAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  deletedAt   DateTime?
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
 
   // Relations
-  orgMemberships OrgMember[] @relation("OrgMembers")
-  createdQuestions Question[] @relation("QuestionCreator")
-  likes Like[]
-  comments Comment[]
-  assignedTasks Task[] @relation("AssignedTasks")
-  createdTasks Task[] @relation("CreatedTasks")
-  notifications Notification[]
+  orgMemberships   OrgMember[]    @relation("OrgMembers")
+  createdQuestions Question[]     @relation("QuestionCreator")
+  createdBanks     QuestionBank[] @relation("BankCreator")
+  likes            Like[]
+  comments         Comment[]
+  assignedTasks    Task[]         @relation("AssignedTasks")
+  createdTasks     Task[]         @relation("CreatedTasks")
+  notifications    Notification[]
+  postedNotices    Notice[]       @relation("NoticeAuthor")
 
   @@index([clerkId])
   @@index([email])
+  @@index([username])
+  @@map("users")
 }
 
 model Organization {
-  id String @id @default(cuid())
-  name String
-  slug String @unique
-  logo String?
+  id          String    @id @default(cuid())
+  name        String
+  slug        String    @unique
+  logo        String?
   description String?
-  address String?
-  type OrgType
-  deletedAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  address     String?
+  type        OrgType
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   // Relations
-  members OrgMember[]
+  members       OrgMember[]
   questionBanks QuestionBank[]
-  notices Notice[]
-  tasks Task[]
-  questions Question[]
+  notices       Notice[]
+  tasks         Task[]
+  questions     Question[]
 
   @@index([slug])
+  @@map("organizations")
 }
 
 model OrgMember {
-  id String @id @default(cuid())
-  userId String
-  orgId String
-  role OrgRole
+  id       String   @id @default(cuid())
+  userId   String
+  orgId    String
+  role     OrgRole
   subjects String[] // ["Math", "Physics"]
-  classes String[] // ["Class 9", "Class 10"]
+  classes  String[] // ["Class 9", "Class 10"]
   joinedAt DateTime @default(now())
 
-  user User @relation("OrgMembers", fields: [userId], references: [id], onDelete: Cascade)
-  org Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  user User         @relation("OrgMembers", fields: [userId], references: [id], onDelete: Cascade)
+  org  Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
 
   @@unique([userId, orgId])
   @@index([orgId, role])
   @@index([userId])
+  @@map("org_members")
 }
 
-// ====================
+// ============================================================
 // QUESTION BANK & QUESTIONS
-// ====================
+// ============================================================
 
 model QuestionBank {
-  id String @id @default(cuid())
-  orgId String
-  name String
+  id          String    @id @default(cuid())
+  orgId       String
+  name        String
   description String?
-  subject String
-  className String
+  subject     String
+  className   String
   createdById String
-  deletedAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  deletedAt   DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
-  org Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  creator User @relation(fields: [createdById], references: [id])
+  org       Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  creator   User         @relation("BankCreator", fields: [createdById], references: [id])
   questions Question[]
 
   @@index([orgId, subject, className])
   @@index([createdById])
+  @@map("question_banks")
 }
 
 model Question {
-  id String @id @default(cuid())
-  bankId String?
-  orgId String? // SCHOOL/PRIVATE হলে required
+  id          String  @id @default(cuid())
+  bankId      String?
+  orgId       String?
   createdById String
 
   // Content
-  title String
-  content Json // MD structured data
-  contentType String @default("MD") // MD, LATEX, RICH_TEXT
-  subject String
-  className String
-  chapter String?
-  topic String?
-  difficulty Difficulty @default(NORMAL)
-  totalMarks Int?
-  timeMinutes Int?
+  title       String
+  content     Json    // Markdown structured data
+  contentType String  @default("MD") // MD | RICH_TEXT
+  subject     String
+  className   String
+  chapter     String?
+  topic       String?
 
-  // Visibility & AI
+  // Config
+  difficulty   Difficulty @default(NORMAL)
+  totalMarks   Int?
+  timeMinutes  Int?
+
+  // Visibility
   visibility Visibility @default(PRIVATE)
-  aiGenerated Boolean @default(false)
-  aiModel String?
-  customPrompt String?
-  syllabusFile String?
 
-  // Social
-  likesCount Int @default(0)
+  // AI Metadata
+  aiGenerated  Boolean @default(false)
+  aiModel      String?
+  customPrompt String?
+  syllabusFile String? // Cloudinary/S3 URL
+
+  // Social counters — denormalized for performance
+  likesCount    Int @default(0)
   commentsCount Int @default(0)
-  sharesCount Int @default(0)
-  viewsCount Int @default(0)
+  sharesCount   Int @default(0)
+  viewsCount    Int @default(0)
 
   // Meta
   deletedAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   // Relations
-  bank QuestionBank? @relation(fields: [bankId], references: [id], onDelete: SetNull)
-  org Organization? @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  creator User @relation("QuestionCreator", fields: [createdById], references: [id], onDelete: Cascade)
-  likes Like[]
-  comments Comment[]
-  submittedInTasks Task[] @relation("SubmittedQuestion")
+  bank    QuestionBank? @relation(fields: [bankId], references: [id], onDelete: SetNull)
+  org     Organization? @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  creator User          @relation("QuestionCreator", fields: [createdById], references: [id], onDelete: Cascade)
+  likes   Like[]
+  comments     Comment[]
+  submittedIn  Task[]    @relation("SubmittedQuestion")
 
   @@index([orgId, subject, className])
   @@index([visibility, createdAt])
   @@index([createdById])
   @@index([bankId])
-  @@check(visibility = 'PUBLIC' OR orgId IS NOT NULL)
+  @@map("questions")
 }
 
 model Like {
-  id String @id @default(cuid())
-  userId String
+  id         String   @id @default(cuid())
+  userId     String
   questionId String
-  createdAt DateTime @default(now())
+  createdAt  DateTime @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@unique([userId, questionId])
   @@index([questionId])
+  @@map("likes")
 }
 
 model Comment {
-  id String @id @default(cuid())
-  userId String
+  id         String    @id @default(cuid())
+  userId     String
   questionId String
-  content String
-  parentId String? // nested reply
-  deletedAt DateTime?
-  createdAt DateTime @default(now())
+  content    String
+  parentId   String?
+  deletedAt  DateTime?
+  createdAt  DateTime  @default(now())
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
-  parent Comment? @relation("Replies", fields: [parentId], references: [id], onDelete: Cascade)
-  replies Comment[] @relation("Replies")
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  question Question  @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  parent   Comment?  @relation("Replies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies  Comment[] @relation("Replies")
 
   @@index([questionId, createdAt])
   @@index([parentId])
+  @@map("comments")
 }
 
-// ====================
+// ============================================================
 // NOTICE & TASK
-// ====================
+// ============================================================
 
 model Notice {
-  id String @id @default(cuid())
-  orgId String
-  title String
+  id          String     @id @default(cuid())
+  orgId       String
+  title       String
   description String
-  type NoticeType @default(GENERAL)
-  postedById String
-  isImportant Boolean @default(false)
-  deletedAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  type        NoticeType @default(GENERAL)
+  postedById  String
+  isPinned    Boolean    @default(false)
+  deletedAt   DateTime?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
-  org Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  postedBy User @relation(fields: [postedById], references: [id], onDelete: Cascade)
+  org      Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  postedBy User         @relation("NoticeAuthor", fields: [postedById], references: [id], onDelete: Cascade)
 
   @@index([orgId, type, createdAt])
-  @@index([isImportant, createdAt])
+  @@index([isPinned, createdAt])
+  @@map("notices")
 }
 
 model Task {
-  id String @id @default(cuid())
-  orgId String
-  assignedToId String
-  assignedById String
-  title String
-  description String?
-  assignDate DateTime @default(now())
-  expireDate DateTime?
-  status TaskStatus @default(PENDING)
+  id               String     @id @default(cuid())
+  orgId            String
+  assignedToId     String
+  assignedById     String
+  title            String
+  description      String?
+  assignDate       DateTime   @default(now())
+  expireDate       DateTime?
+  status           TaskStatus @default(PENDING)
   submittedQuestionId String?
-  feedback String @default("")
-  approveMessage String @default("")
-  deletedAt DateTime?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  feedback         String     @default("")
+  approveMessage   String     @default("")
+  deletedAt        DateTime?
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
 
-  org Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
-  assignedTo User @relation("AssignedTasks", fields: [assignedToId], references: [id], onDelete: Cascade)
-  assignedBy User @relation("CreatedTasks", fields: [assignedById], references: [id], onDelete: Cascade)
-  submittedQuestion Question? @relation("SubmittedQuestion", fields: [submittedQuestionId], references: [id], onDelete: SetNull)
+  org               Organization @relation(fields: [orgId], references: [id], onDelete: Cascade)
+  assignedTo        User         @relation("AssignedTasks", fields: [assignedToId], references: [id], onDelete: Cascade)
+  assignedBy        User         @relation("CreatedTasks", fields: [assignedById], references: [id], onDelete: Cascade)
+  submittedQuestion Question?    @relation("SubmittedQuestion", fields: [submittedQuestionId], references: [id], onDelete: SetNull)
 
   @@index([assignedToId, status])
   @@index([orgId, status])
   @@index([assignedById])
   @@index([expireDate])
+  @@map("tasks")
 }
 
-// ====================
+// ============================================================
 // NOTIFICATION
-// ====================
+// ============================================================
 
 model Notification {
-  id String @id @default(cuid())
-  userId String
-  title String
-  body String
-  type NotificationType
-  isRead Boolean @default(false)
-  link String?
-  createdAt DateTime @default(now())
+  id        String           @id @default(cuid())
+  userId    String
+  title     String
+  body      String
+  type      NotificationType
+  isRead    Boolean          @default(false)
+  link      String?
+  createdAt DateTime         @default(now())
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, isRead, createdAt])
+  @@map("notifications")
 }
