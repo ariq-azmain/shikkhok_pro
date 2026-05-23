@@ -27,11 +27,9 @@ export default function OnboardingPage() {
         }),
       });
 
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw new Error(data.error || "Something went wrong");
-      }
+      let data: any = {};
+      try { data = await res.json(); } catch { /* empty body */ }
+      if (!res.ok) throw new Error(data.error || `Server error ${res.status}`);
 
       router.push(selected === "TEACHER" ? "/dashboard" : "/feed");
     } catch (err: any) {
