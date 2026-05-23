@@ -16,8 +16,6 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const clerkId = user.id;
-
     const text = await req.text();
     if (!text) {
       return NextResponse.json({ error: "Empty request body" }, { status: 400 });
@@ -44,7 +42,7 @@ export async function POST(req: Request) {
     const { error } = await supabase
       .from("users")
       .update(updateData)
-      .eq("clerkId", clerkId);
+      .eq("clerkId", user.id);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
