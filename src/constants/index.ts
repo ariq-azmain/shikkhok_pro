@@ -1,3 +1,4 @@
+import { GraduationCap, BookOpen, Users, ArrowRight, Check } from "lucide-react";
 import type { Feature, Stat, Step, Testimonial, FAQItem, NavItem } from "@/types";
 
 export const NAV_ITEMS: NavItem[] = [

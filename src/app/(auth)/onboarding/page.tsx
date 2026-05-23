@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { GraduationCap, BookOpen, Users, ArrowRight, Check } from "lucide-react";
+
 import { ACCOUNT_TYPES } from '@/constants'
 
 
