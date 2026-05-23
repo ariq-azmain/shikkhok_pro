@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-
+import { FiArrowRight } from "react-icons/fi";
 import { ACCOUNT_TYPES } from '@/constants'
 
 
@@ -232,7 +232,7 @@ export default function OnboardingPage() {
           }}
         >
           {loading ? "Please wait..." : "Continue"}
-          {!loading && <ArrowRight size={18} />}
+          {!loading && <FiArrowRight size={18} />}
         </button>
       </div>
     </main>
