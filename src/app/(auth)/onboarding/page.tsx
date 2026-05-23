@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { FiArrowRight } from "react-icons/fi";
+import { Check } from "lucide-react";
 import { ACCOUNT_TYPES } from '@/constants'
 
 
