@@ -222,3 +222,33 @@ export const CLASSES = [
   "SSC",
   "HSC",
 ];
+
+export const ACCOUNT_TYPES = [
+  {
+    type: "TEACHER",
+    icon: GraduationCap,
+    title: "Teacher",
+    description: "Create AI-powered exam papers, manage your school organization, and assign tasks.",
+    perks: ["AI Question Generator", "Question Banks", "Create Organization", "Task Management"],
+    color: "#6366f1",
+    glow: "rgba(99,102,241,0.25)",
+  },
+  {
+    type: "STUDENT",
+    icon: BookOpen,
+    title: "Student",
+    description: "Browse public question papers, engage with teachers, and follow your feed.",
+    perks: ["Browse Public Questions", "Like & Comment", "Follow Teachers", "Explore Feed"],
+    color: "#22d3ee",
+    glow: "rgba(34,211,238,0.25)",
+  },
+  {
+    type: "PARENT",
+    icon: Users,
+    title: "Parent",
+    description: "Stay updated with your child's education and follow public academic content.",
+    perks: ["Browse Public Questions", "Like & Comment", "Explore Feed", "Academic Insights"],
+    color: "#a855f7",
+    glow: "rgba(168,85,247,0.25)",
+  },
+];
