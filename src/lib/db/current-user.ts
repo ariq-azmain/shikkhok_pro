@@ -1,41 +1,32 @@
 // src/lib/db/current-user.ts
 // ---------------------------------------------------------------
-// Current Authenticated User Helper
-// Server Component বা Route Handler এ current user নেওয়ার জন্য।
-// Clerk auth() + DB query bridge করে।
+// Server-side helpers to get the currently authenticated user.
+// Clerk auth() → clerkId → Supabase users table.
 // ---------------------------------------------------------------
 
 import { auth } from "@clerk/nextjs/server";
 import { getUserByClerkId } from "./user";
 
-/**
- * Server-side: Clerk থেকে clerkId নিয়ে DB থেকে full user আনো।
- * Unauthenticated হলে null return করে।
- */
+/** Returns full DB user or null if unauthenticated. */
 export async function getCurrentUser() {
   const { userId: clerkId } = await auth();
   if (!clerkId) return null;
-
   return getUserByClerkId(clerkId);
 }
 
-/**
- * Server-side: Current user লাগবেই, না থাকলে error throw করো।
- * Protected route/action এ ব্যবহার করো।
- */
+/** Throws if unauthenticated — use in protected routes/actions. */
 export async function requireCurrentUser() {
   const user = await getCurrentUser();
   if (!user) throw new Error("Unauthorized");
   return user;
 }
 
-/**
- * User এর Org এ কোনো role আছে কিনা check করো।
- */
+/** Check a user's role inside a specific org. */
 export async function getUserOrgRole(clerkId: string, orgId: string) {
   const user = await getUserByClerkId(clerkId);
   if (!user) return null;
-
-  const membership = user.orgMemberships.find((m) => m.orgId === orgId);
+  const membership = user.orgMemberships.find(
+    (m: { orgId: string }) => m.orgId === orgId
+  );
   return membership?.role ?? null;
 }

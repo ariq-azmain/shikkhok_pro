@@ -1,16 +1,24 @@
 // src/lib/db/user.ts
 // ---------------------------------------------------------------
-// User DB Utilities
-// Clerk webhook বা sign-up পরে ব্যবহার করো।
+// User DB helpers — all queries via Supabase service role client.
+// No Prisma. Server-only.
 // ---------------------------------------------------------------
 
-import { prisma } from "@/lib/prisma";
-import { AccountType } from "@prisma/client";
+import { supabaseAdmin } from "@/lib/supabase/admin";
+import type { ProfileUpdatePayload } from "@/types";
 
-/**
- * Clerk Auth থেকে আসা user DB তে আছে কিনা check করো।
- * না থাকলে নতুন user তৈরি করো (upsert)।
- */
+// ── Shared select string for full user ────────────────────────
+// Matches the columns in the "users" table (Prisma camelCase → DB column names)
+const USER_FULL_SELECT = `
+  id, "clerkId", username, "displayName", email,
+  avatar, bio, "accountType", "createdAt",
+  org_members (
+    "orgId", role, subjects, classes,
+    organizations ( id, name, slug, logo, type )
+  )
+` as const;
+
+// ── Sync from Clerk webhook / sign-up ─────────────────────────
 export async function syncUserFromClerk({
   clerkId,
   email,
@@ -24,114 +32,172 @@ export async function syncUserFromClerk({
   avatar?: string;
   username: string;
 }) {
-  return prisma.user.upsert({
-    where: { clerkId },
-    update: {
-      displayName,
-      avatar,
-      email,
-    },
-    create: {
-      clerkId,
-      email,
-      displayName,
-      avatar,
-      username,
-      accountType: AccountType.STUDENT, // default — onboarding এ পরিবর্তন হবে
-    },
-  });
-}
-
-/**
- * clerkId দিয়ে DB থেকে user নিয়ে আসো।
- */
-export async function getUserByClerkId(clerkId: string) {
-  return prisma.user.findUnique({
-    where: { clerkId },
-    select: {
-      id: true,
-      clerkId: true,
-      username: true,
-      displayName: true,
-      email: true,
-      avatar: true,
-      bio: true,
-      accountType: true,
-      createdAt: true,
-      orgMemberships: {
-        select: {
-          orgId: true,
-          role: true,
-          subjects: true,
-          classes: true,
-          org: {
-            select: { id: true, name: true, slug: true, logo: true, type: true },
-          },
-        },
+  const { data, error } = await supabaseAdmin
+    .from("users")
+    .upsert(
+      {
+        clerkId,
+        email,
+        displayName,
+        avatar: avatar ?? null,
+        username,
+        accountType: "STUDENT",
       },
-    },
-  });
+      {
+        onConflict: "clerkId",
+        // On conflict, only update these fields (not username/accountType)
+        ignoreDuplicates: false,
+      }
+    )
+    .select("id, clerkId, username, displayName, email, avatar, accountType")
+    .single();
+
+  if (error) throw new Error(`syncUserFromClerk: ${error.message}`);
+  return data;
 }
 
-/**
- * username দিয়ে user খোঁজো।
- */
-export async function getUserByUsername(username: string) {
-  return prisma.user.findUnique({
-    where: { username },
-    select: {
-      id: true,
-      username: true,
-      displayName: true,
-      avatar: true,
-      bio: true,
-      accountType: true,
-      createdAt: true,
-    },
-  });
+// ── Fetch full authenticated user (server-side auth checks) ───
+export async function getUserByClerkId(clerkId: string) {
+  const { data, error } = await supabaseAdmin
+    .from("users")
+    .select(USER_FULL_SELECT)
+    .eq("clerkId", clerkId)
+    .is("deletedAt", null)
+    .single();
+
+  if (error) {
+    // PGRST116 = "no rows" — not a real error
+    if (error.code === "PGRST116") return null;
+    throw new Error(`getUserByClerkId: ${error.message}`);
+  }
+
+  // Reshape org_members → orgMemberships to match UserFull type
+  const { org_members, ...rest } = data as any;
+  return {
+    ...rest,
+    orgMemberships: (org_members ?? []).map((m: any) => ({
+      orgId: m.orgId,
+      role: m.role,
+      subjects: m.subjects,
+      classes: m.classes,
+      org: m.organizations,
+    })),
+  };
 }
 
-/**
- * Onboarding এ AccountType আপডেট করো।
- */
-export async function updateUserAccountType(
-  clerkId: string,
-  accountType: AccountType
+// ── Fetch public profile (for /profile/[username]) ────────────
+export async function getUserPublicProfile(username: string) {
+  const { data, error } = await supabaseAdmin
+    .from("users")
+    .select(
+      `id, username, "displayName", avatar, bio, "accountType", "createdAt"`
+    )
+    .eq("username", username)
+    .is("deletedAt", null)
+    .single();
+
+  if (error) {
+    if (error.code === "PGRST116") return null;
+    throw new Error(`getUserPublicProfile: ${error.message}`);
+  }
+
+  // Count public questions separately (Supabase doesn't do _count like Prisma)
+  const { count } = await supabaseAdmin
+    .from("questions")
+    .select("id", { count: "exact", head: true })
+    .eq("createdById", data.id)
+    .eq("visibility", "PUBLIC")
+    .is("deletedAt", null);
+
+  return { ...data, questionCount: count ?? 0 };
+}
+
+// ── Fetch user's public questions (cursor-based) ───────────────
+const PAGE_SIZE = 12;
+
+export async function getUserPublicQuestions(
+  userId: string,
+  cursor?: string // last createdAt value
 ) {
-  return prisma.user.update({
-    where: { clerkId },
-    data: { accountType },
-    select: { id: true, accountType: true },
-  });
+  let query = supabaseAdmin
+    .from("questions")
+    .select(
+      `
+      id, title, subject, "className", difficulty,
+      "totalMarks", "likesCount", "commentsCount", "viewsCount", "createdAt",
+      creator:users!questions_createdById_fkey (
+        id, username, "displayName", avatar, "accountType"
+      )
+    `
+    )
+    .eq("createdById", userId)
+    .eq("visibility", "PUBLIC")
+    .is("deletedAt", null)
+    .order("createdAt", { ascending: false })
+    .limit(PAGE_SIZE + 1);
+
+  if (cursor) {
+    query = query.lt("createdAt", cursor);
+  }
+
+  const { data, error } = await query;
+
+  if (error) throw new Error(`getUserPublicQuestions: ${error.message}`);
+
+  const hasMore = data.length > PAGE_SIZE;
+  const items = hasMore ? data.slice(0, PAGE_SIZE) : data;
+  const nextCursor = hasMore ? items[items.length - 1].createdAt : null;
+
+  return { data: items, nextCursor };
 }
 
-/**
- * Profile আপডেট করো।
- */
+// ── Update profile fields ──────────────────────────────────────
 export async function updateUserProfile(
   clerkId: string,
-  data: { displayName?: string; bio?: string; avatar?: string }
+  payload: ProfileUpdatePayload
 ) {
-  return prisma.user.update({
-    where: { clerkId },
-    data,
-    select: {
-      id: true,
-      username: true,
-      displayName: true,
-      avatar: true,
-      bio: true,
-    },
-  });
+  // Build update object — only include defined keys
+  const update: Record<string, unknown> = {};
+  if (payload.displayName !== undefined) update.displayName = payload.displayName;
+  if (payload.bio !== undefined) update.bio = payload.bio || null;
+  if (payload.avatar !== undefined) update.avatar = payload.avatar;
+
+  const { data, error } = await supabaseAdmin
+    .from("users")
+    .update(update)
+    .eq("clerkId", clerkId)
+    .select(
+      `id, username, "displayName", avatar, bio, "accountType"`
+    )
+    .single();
+
+  if (error) throw new Error(`updateUserProfile: ${error.message}`);
+  return data;
 }
 
-/**
- * username এর uniqueness check করো (sign-up এর সময়)।
- */
+// ── Update account type (onboarding) ──────────────────────────
+export async function updateUserAccountType(
+  clerkId: string,
+  accountType: "TEACHER" | "STUDENT" | "PARENT"
+) {
+  const { data, error } = await supabaseAdmin
+    .from("users")
+    .update({ accountType })
+    .eq("clerkId", clerkId)
+    .select("id, accountType")
+    .single();
+
+  if (error) throw new Error(`updateUserAccountType: ${error.message}`);
+  return data;
+}
+
+// ── Username availability check ────────────────────────────────
 export async function isUsernameAvailable(username: string): Promise<boolean> {
-  const existing = await prisma.user.findUnique({
-    where: { username },
-    select: { id: true },
-  });
-  return !existing;
+  const { count, error } = await supabaseAdmin
+    .from("users")
+    .select("id", { count: "exact", head: true })
+    .eq("username", username);
+
+  if (error) throw new Error(`isUsernameAvailable: ${error.message}`);
+  return (count ?? 0) === 0;
 }

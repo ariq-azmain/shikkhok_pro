@@ -1,45 +1,20 @@
-export interface Feature {
-  id: string;
-  icon: string;
-  title: string;
-  description: string;
-  color: string;
-}
+// src/types/index.ts
+// ---------------------------------------------------------------
+// Single barrel export for ALL types in the project.
+//
+// Usage:
+//   import type { Question, UserFull, OrgRole } from "@/types"
+//
+// ---------------------------------------------------------------
 
-export interface Stat {
-  value: string;
-  label: string;
-  suffix?: string;
-}
+// Shared primitives & enums
+export type * from "./common";
 
-export interface Step {
-  number: string;
-  title: string;
-  description: string;
-}
+// User & landing UI types
+export type * from "./user";
 
-export interface Testimonial {
-  id: string;
-  name: string;
-  role: string;
-  school: string;
-  content: string;
-  avatar: string;
-  rating: number;
-}
+// Question, content, feed, comments
+export type * from "./question";
 
-export interface FAQItem {
-  id: string;
-  question: string;
-  answer: string;
-}
-
-export interface NavItem {
-  label: string;
-  href: string;
-}
-
-export interface CurriculumClass {
-  label: string;
-  range: string;
-}
+// Organization, tasks, notices, notifications
+export type * from "./org";
