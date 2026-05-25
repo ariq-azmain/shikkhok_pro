@@ -20,7 +20,7 @@
 ### Frontend
 ```text
 Framework     : Next.js 14+ (App Router)
-Styling       : Tailwind CSS + shadcn/ui
+Styling       : Tailwind CSS
 State Mgmt    : Zustand / React Query (TanStack)
 Forms         : React Hook Form + Zod
 Rich Text     : TipTap Editor (Question Editor এর জন্য)
@@ -32,8 +32,7 @@ Shape Drawing : Fabric.js / Konva (custom shapes in editor)
 ### Backend
 ```text
 Runtime       : Next.js API Routes
-ORM           : Prisma
-Database      : PostgreSQL (Neon / Supabase)
+Database      : PostgreSQL (Supabase)
 File Storage  : Cloudinary / AWS S3 (ছবি, সিলেবাস, বই আপলোড)
 Cache         : Redis (Upstash)
 Queue         : BullMQ (PDF generation, AI queue)
@@ -66,7 +65,7 @@ Features      : 1-on-1 DM, Group Chat (org-level), file/image/question share
 ### DevOps
 ```text
 Hosting       : Vercel (Frontend + API)
-DB Hosting    : Neon PostgreSQL / Supabase
+DB Hosting    : PostgreSQL / Supabase
 Monitoring    : Sentry + Vercel Analytics
 CI/CD         : GitHub Actions
 ```
@@ -112,7 +111,7 @@ ORG_TEACHER      → Organization এর সদস্য শিক্ষক
 
 ### Core Models
 
-```prisma
+```text
 // ইউজার
 model User {
   id            String     @id @default(cuid())
@@ -415,7 +414,6 @@ Shikkhok Pro/
 │       └── NotificationBell.tsx
 │
 ├── lib/
-│   ├── prisma.ts                      # Prisma client
 │   ├── clerk.ts                       # Clerk helpers
 │   ├── ai.ts                          # AI prompt builder
 │   ├── pdf.ts                         # PDF generator
@@ -438,18 +436,18 @@ Shikkhok Pro/
 ```text
 Path 1 — AI Generation:
   ┌─────────────────────────────────────────┐
-  │  Teacher → Subject + Class নির্বাচন     │
+  │  Teacher → Subject + Class নির্বাচন        │
   │  → Difficulty (Easy/Normal/Hard)        │
   │  → Syllabus Input:                      │
   │      ├── File Upload (PDF/DOCX/IMG)     │
-  │      ├── Chapter/Topic manually        │
-  │      └── Custom Prompt to AI           │
+  │      ├── Chapter/Topic manually         │
+  │      └── Custom Prompt to AI            │
   │  → Book Source:                         │
-  │      ├── NCTB Board Books (built-in)   │
-  │      └── Custom Book Upload            │
-  │  → AI generates MD format question     │
-  │  → Teacher previews → edits if needed  │
-  │  → Set Visibility → Save/Export        │
+  │      ├── NCTB Board Books (built-in)    │
+  │      └── Custom Book Upload             │
+  │  → AI generates MD format question      │
+  │  → Teacher previews → edits if needed   │
+  │  → Set Visibility → Save/Export         │
   └─────────────────────────────────────────┘
 
 Path 2 — Question Editor (Manual):
@@ -464,7 +462,7 @@ Path 2 — Question Editor (Manual):
 ```
 
 ### AI ইনপুট প্যারামিটার
-```typescript
+```javascript
 interface QuestionGenerationInput {
   subject: string;          // বাংলা | ইংরেজি | গণিত | বিজ্ঞান...
   className: string;        // Class-1 → HSC
@@ -479,10 +477,12 @@ interface QuestionGenerationInput {
 }
 ```
 
+
+
 ### Question Editor ফিচার সমূহ
 ```text
 Text Formatting:
-  ├── Heading (h1–h4)
+  ├── Heading (h1–h6)
   ├── Bold, Italic, Underline, Strikethrough
   ├── Color Text, Text Alignment
   ├── Superscript, Subscript

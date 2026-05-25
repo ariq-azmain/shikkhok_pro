@@ -3,8 +3,8 @@
 ## Phase 1 — Foundation (সপ্তাহ ১-২)
 - [x] Next.js প্রজেক্ট সেটআপ
 - [x] Clerk Auth ইন্টিগ্রেশন (Google/GitHub/Facebook)
-- [ ] Onboarding: Account type select (TEACHER/STUDENT/PARENT)
-- [ ] Prisma + PostgreSQL সেটআপ
+- [x] Onboarding: Account type select (TEACHER/STUDENT/PARENT)
+- [x] Superbase + PostgreSQL সেটআপ
 - [ ] User Profile পেজ
 - [ ] Organization তৈরি (TEACHER → becomes ORG_PRINCIPAL)
 - [ ] Teacher add/assign system (subject + class)
