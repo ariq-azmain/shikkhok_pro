@@ -36,7 +36,7 @@ export default function OnboardingPage() {
           const data = await res.json();
           if (data.onboardingComplete === true) {
             // আগেই onboarding সম্পন্ন — proper page এ redirect
-            const dest = data.accountType === "TEACHER" ? "/dashboard" : "/feed";
+            const dest = data.accountType === "TEACHER" ? "/profile" : "/q";
             router.replace(dest);
             return;
           }
