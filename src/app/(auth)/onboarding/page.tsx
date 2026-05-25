@@ -1,17 +1,57 @@
+// src/app/(auth)/onboarding/page.tsx
+// ─────────────────────────────────────────────────────────────────
+// Fix করা হয়েছে:
+//   1. Page load এ DB check — onboardingComplete: true হলে redirect
+//   2. API থেকে alreadyDone: true এলেও redirect (409 handle)
+//   3. Loading state যোগ করা হয়েছে initial check এর জন্য
+// ─────────────────────────────────────────────────────────────────
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { GraduationCap, BookOpen, Users, ArrowRight, Check } from "lucide-react";
-import { ACCOUNT_TYPES } from '@/constants'
-
+import { ACCOUNT_TYPES } from "@/constants";
 
 export default function OnboardingPage() {
   const [selected, setSelected] = useState<string | null>(null);
   const [bio, setBio] = useState("");
   const [loading, setLoading] = useState(false);
+  const [checking, setChecking] = useState(true); // ← initial DB check
   const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  // ── Bug Fix 4: Page load এ onboarding status check ──────────────
+  // /api/profile/me থেকে নিজের profile fetch করো।
+  // onboardingComplete: true হলে সরাসরি redirect।
+  // এতে existing user কখনো এই page এ আটকে থাকবে না।
+  useEffect(() => {
+    let cancelled = false;
+
+    async function checkOnboarding() {
+      try {
+        const res = await fetch("/api/profile/me");
+        if (cancelled) return;
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.onboardingComplete === true) {
+            // আগেই onboarding সম্পন্ন — proper page এ redirect
+            const dest = data.accountType === "TEACHER" ? "/dashboard" : "/feed";
+            router.replace(dest);
+            return;
+          }
+        }
+        // 401 বা 404 = নতুন user, এখানেই থাকুক
+      } catch {
+        // Network error হলেও page show করো
+      } finally {
+        if (!cancelled) setChecking(false);
+      }
+    }
+
+    checkOnboarding();
+    return () => { cancelled = true; };
+  }, [router]);
 
   async function handleContinue() {
     if (!selected || loading) return;
@@ -25,11 +65,17 @@ export default function OnboardingPage() {
         body: JSON.stringify({ accountType: selected, bio: bio.trim() }),
       });
 
-      // Always try to parse JSON — if it fails, use status code
-      let data: { error?: string; success?: boolean } = {};
+      let data: { error?: string; success?: boolean; alreadyDone?: boolean } = {};
       const text = await res.text();
       if (text) {
-        try { data = JSON.parse(text); } catch { /* non-JSON response */ }
+        try { data = JSON.parse(text); } catch { /* non-JSON */ }
+      }
+
+      // ── Bug Fix 5: 409 alreadyDone handle ──────────────────────
+      if (res.status === 409 && data.alreadyDone) {
+        // Onboarding complete আছে — overwrite না করে redirect
+        router.replace(selected === "TEACHER" ? "/dashboard" : "/feed");
+        return;
       }
 
       if (!res.ok) {
@@ -41,6 +87,18 @@ export default function OnboardingPage() {
       setError(err.message);
       setLoading(false);
     }
+  }
+
+  // Initial check চলছে — blank screen বা spinner দেখাও
+  if (checking) {
+    return (
+      <main
+        className="h-screen w-screen flex items-center justify-center"
+        style={{ background: "var(--bg-primary)" }}
+      >
+        <div className="w-8 h-8 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+      </main>
+    );
   }
 
   return (
