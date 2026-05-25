@@ -1,5 +1,6 @@
-@import "tailwindcss";
 @layer theme, base, clerk, components, utilities;
+@import "tailwindcss";
+
 :root {
   --bg-primary: #080811;
   --bg-secondary: #0e0e1a;
@@ -15,6 +16,7 @@
   --border-subtle: rgba(255, 255, 255, 0.06);
   --border-light: rgba(255, 255, 255, 0.1);
 }
+
 
 @layer base {
   * {
