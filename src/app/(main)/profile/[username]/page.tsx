@@ -1,4 +1,5 @@
 // src/app/(main)/profile/[username]/page.tsx
+// searchParams সরিয়ে দেওয়া হয়েছে — tab এখন শুধু client-side।
 
 import { notFound } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
@@ -30,18 +31,15 @@ export async function generateMetadata({
 
 export default async function ProfilePage({
   params,
-  searchParams,
 }: {
   params: Promise<{ username: string }>;
-  searchParams: Promise<{ tab?: string }>;
 }) {
   const { username } = await params;
-  const { tab } = await searchParams;
 
   const profileUser = await getUserPublicProfile(username);
   if (!profileUser) notFound();
 
-  // Ownership check — server-side, no client involvement
+  // Ownership check — server-side
   const { userId: clerkId } = await auth();
   let isOwner = false;
   if (clerkId) {
@@ -49,16 +47,15 @@ export default async function ProfilePage({
     isOwner = currentUser?.id === profileUser.id;
   }
 
-  const activeTab = isOwner && tab === "settings" ? "settings" : "questions";
-
   return (
     <main className="min-h-screen" style={{ background: "var(--bg-primary)" }}>
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10">
-        <ProfileClient
-          user={profileUser}
-          isOwner={isOwner}
-          initialTab={activeTab}
-        />
+        {/* 
+          tab state এখন সম্পূর্ণ client-side।
+          ProfileClient নিজেই useSearchParams() দিয়ে ?tab= পড়বে এবং
+          router.push() দিয়ে update করবে — server re-render দরকার নেই।
+        */}
+        <ProfileClient user={profileUser} isOwner={isOwner} />
       </div>
     </main>
   );
