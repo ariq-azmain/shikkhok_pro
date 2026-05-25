@@ -114,7 +114,12 @@ export default function SignInPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState<string | null>(null); // which button is loading
 
-  if (!isLoaded) return null;
+  if (!isLoaded) return (
+  <main className="min-h-screen w-full flex items-center justify-center"
+    style={{ background: "var(--bg-primary)" }}>
+    <div className="w-8 h-8 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
+  </main>
+  );
 
   // ── OAuth providers ───────────────────────────────────────
   const handleOAuth = async (provider: "oauth_google" | "oauth_facebook" | "oauth_github") => {
