@@ -1,9 +1,4 @@
 // src/app/api/onboarding/route.ts
-// ─────────────────────────────────────────────────────────────────
-// Fix করা হয়েছে:
-//   1. onboardingComplete: true আছে এমন user কে block করা
-//   2. accountType পরিবর্তন prevent করা existing completed users এর জন্য
-// ─────────────────────────────────────────────────────────────────
 
 import { currentUser } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
@@ -23,41 +18,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // ── Bug Fix 3: onboardingComplete check ─────────────────────────
-    // DB থেকে current user fetch করো এবং onboardingComplete চেক করো।
-    // যদি আগেই complete হয়ে থাকে → 409 Conflict।
-    // এটা সেই attack কে block করে:
-    //   Sign-up URL এ manually গিয়ে → onboarding page এ আসা →
-    //   submit করে নিজের accountType overwrite করা।
-
-    const { data: dbUser, error: fetchErr } = await supabase
-      .from("users")
-      .select("id, onboardingComplete, accountType")
-      .eq("clerkId", user.id)
-      .maybeSingle();
-
-    if (fetchErr) {
-      return NextResponse.json({ error: fetchErr.message }, { status: 500 });
-    }
-
-    if (!dbUser) {
-      // Webhook এখনো process হয়নি (race condition)
-      // এই ক্ষেত্রে insert করে দাও
-      return NextResponse.json(
-        { error: "User record not found. Please wait a moment and try again." },
-        { status: 404 }
-      );
-    }
-
-    if (dbUser.onboardingComplete === true) {
-      // আগেই onboarding complete — redirect করে দাও, overwrite করো না
-      return NextResponse.json(
-        { error: "Onboarding already completed.", alreadyDone: true },
-        { status: 409 }
-      );
-    }
-
-    // ── Parse & validate body ───────────────────────────────────────
+    // ── Body parse আগেই করো — dbUser check এর আগে ─────────────────
     const text = await req.text();
     if (!text) {
       return NextResponse.json({ error: "Empty request body" }, { status: 400 });
@@ -76,20 +37,95 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid account type" }, { status: 400 });
     }
 
-    // ── Update DB: accountType + bio + onboardingComplete: true ─────
+    // ── DB তে user আছে কিনা check করো ──────────────────────────────
+    const { data: dbUser, error: fetchErr } = await supabase
+      .from("users")
+      .select("id, onboardingComplete, accountType")
+      .eq("clerkId", user.id)
+      .maybeSingle();
+
+    if (fetchErr) {
+      return NextResponse.json({ error: fetchErr.message }, { status: 500 });
+    }
+
+    // ── onboarding আগেই complete হয়ে থাকলে block করো ───────────────
+    // এটা সেই attack কে prevent করে:
+    //   Existing user → manually /onboarding URL এ যাওয়া →
+    //   submit করে নিজের accountType overwrite করা।
+    if (dbUser?.onboardingComplete === true) {
+      return NextResponse.json(
+        { error: "Onboarding already completed.", alreadyDone: true },
+        { status: 409 }
+      );
+    }
+
     const updateData: Record<string, unknown> = {
       accountType,
-      onboardingComplete: true,   // ← একবার set হলে আর পরিবর্তন হবে না
+      onboardingComplete: true,
     };
     if (bio && bio.trim().length > 0) {
       updateData.bio = bio.trim();
     }
 
+    if (!dbUser) {
+      // ── Webhook race condition: DB তে user নেই, এখানেই insert করো ──
+      // Clerk এর user.created webhook কখনো কখনো onboarding submit এর
+      // পরে process হয়। তাই এখানে সব Clerk data দিয়ে user তৈরি করো।
+
+      const primaryEmail = user.emailAddresses.find(
+        (e) => e.id === user.primaryEmailAddressId
+      )?.emailAddress;
+
+      if (!primaryEmail) {
+        return NextResponse.json({ error: "No primary email found" }, { status: 400 });
+      }
+
+      const displayName =
+        [user.firstName, user.lastName].filter(Boolean).join(" ") ||
+        user.username ||
+        "User";
+
+      const baseUsername =
+        user.username ??
+        primaryEmail.split("@")[0].toLowerCase().replace(/[^a-z0-9_]/g, "_");
+
+      // Username uniqueness check
+      const { count: usernameCount } = await supabase
+        .from("users")
+        .select("id", { count: "exact", head: true })
+        .eq("username", baseUsername);
+
+      const finalUsername =
+        (usernameCount ?? 0) > 0
+          ? `${baseUsername}_${user.id.slice(-6)}`
+          : baseUsername;
+
+      const { error: insertErr } = await supabase.from("users").insert({
+        clerkId: user.id,
+        email: primaryEmail,
+        displayName,
+        avatar: user.imageUrl ?? null,
+        username: finalUsername,
+        accountType,
+        onboardingComplete: true,
+        ...(bio && bio.trim().length > 0 ? { bio: bio.trim() } : {}),
+      });
+
+      if (insertErr) {
+        return NextResponse.json({ error: insertErr.message }, { status: 500 });
+      }
+
+      return NextResponse.json({ success: true });
+    }
+
+    // ── User আছে, শুধু update করো ───────────────────────────────────
+    // .eq("onboardingComplete", false) — double safety,
+    // race condition এ দুটো request একসাথে এলে একটাই জিতবে।
     const { error: updateErr } = await supabase
       .from("users")
       .update(updateData)
       .eq("clerkId", user.id)
-      .eq("onboardingComplete", false); // double-check: false থাকলেই update
+      .eq("onboardingComplete", false);
 
     if (updateErr) {
       return NextResponse.json({ error: updateErr.message }, { status: 500 });
