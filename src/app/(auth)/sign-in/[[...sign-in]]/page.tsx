@@ -11,11 +11,10 @@ export default function SignInPage() {
             <div
                 className="pointer-events-none fixed inset-0 z-0"
                 style={{
-                    background:
-                        "radial-gradient(ellipse 70% 45% at 50% -10%, rgba(99,102,241,0.13) 0%, transparent 65%)"
+                    background: "radial-gradient(ellipse 70% 45% at 50% -10%, rgba(99,102,241,0.13) 0%, transparent 65%)"
                 }}
             />
-            <div className="relative z-10">
+            <div className="relative z-10 text-blue-200!">
                 <SignIn
                     appearance={{
                         baseTheme: dark,
