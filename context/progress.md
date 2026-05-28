@@ -5,7 +5,7 @@
 - [x] Clerk Auth ইন্টিগ্রেশন (Google/GitHub/Facebook)
 - [x] Onboarding: Account type select (TEACHER/STUDENT/PARENT)
 - [x] Superbase + PostgreSQL সেটআপ
-- [ ] User Profile পেজ
+- [x] User Profile পেজ
 - [ ] Organization তৈরি (TEACHER → becomes ORG_PRINCIPAL)
 - [ ] Teacher add/assign system (subject + class)
 

@@ -2,8 +2,10 @@
 "use client";
 
 import Link from "next/link";
-import { BookOpen, Clock, Award, Eye, Heart, MessageSquare, Cpu, ChevronRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { BookOpen, Clock, Award, Eye, Cpu } from "lucide-react";
 import type { Question } from "@/types/question";
+import ReactionBar from "./ReactionBar";
 
 const DIFFICULTY_CONFIG = {
   EASY: { label: "Easy", className: "text-emerald-400 bg-emerald-400/10 border-emerald-400/20" },
@@ -29,32 +31,29 @@ function timeAgo(dateStr: string) {
   if (m < 60) return `${m}m ago`;
   const h = Math.floor(m / 60);
   if (h < 24) return `${h}h ago`;
-  const d = Math.floor(h / 24);
-  return `${d}d ago`;
+  return `${Math.floor(h / 24)}d ago`;
 }
 
 function getInitials(name: string) {
   return name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
 }
 
-interface Props {
-  question: Question;
-}
-
-export default function QuestionCard({ question }: Props) {
+export default function QuestionCard({ question }: { question: Question }) {
+  const router = useRouter();
   const difficulty = DIFFICULTY_CONFIG[question.difficulty];
   const subjectColor = SUBJECT_COLORS[question.subject] ?? "text-slate-400 bg-slate-400/10";
   const totalQs = question.content.sections?.reduce((acc, s) => acc + s.questions.length, 0) ?? 0;
 
   return (
-    <Link href={`/q/${question.id}`} className="block group">
-      <article
-        className="rounded-2xl p-5 border border-white/5 transition-all duration-200 group-hover:border-white/10 group-hover:-translate-y-0.5 group-hover:shadow-xl"
-        style={{ background: "var(--bg-card)" }}
-      >
-        {/* Header: creator + time */}
+    <article
+      className="rounded-2xl border border-white/5 transition-all duration-200 hover:border-white/10 hover:-translate-y-0.5 hover:shadow-xl"
+      style={{ background: "var(--bg-card)" }}
+    >
+      {/* Clickable area — detail page */}
+      <Link href={`/q/${question.id}`} className="block p-5 pb-3">
+        {/* Creator */}
         <div className="flex items-center gap-3 mb-4">
-          <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 bg-indigo-500/20 border border-indigo-500/30">
+          <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-bold text-white flex-shrink-0 bg-indigo-500/20 border border-indigo-500/30 overflow-hidden">
             {question.creator.avatar ? (
               <img src={question.creator.avatar} alt="" className="w-full h-full rounded-full object-cover" />
             ) : (
@@ -78,13 +77,13 @@ export default function QuestionCard({ question }: Props) {
 
         {/* Title */}
         <h3
-          className="font-bold text-base leading-snug mb-3 line-clamp-2 group-hover:text-indigo-400 transition-colors"
+          className="font-bold text-base leading-snug mb-3 line-clamp-2 hover:text-indigo-400 transition-colors"
           style={{ color: "var(--text-primary)" }}
         >
           {question.title}
         </h3>
 
-        {/* Tags row */}
+        {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-4">
           <span className={`text-xs font-semibold px-2.5 py-0.5 rounded-full ${subjectColor}`}>
             {question.subject}
@@ -102,43 +101,29 @@ export default function QuestionCard({ question }: Props) {
           </span>
         </div>
 
-        {/* Meta row */}
-        <div className="flex items-center gap-4 text-xs mb-4" style={{ color: "var(--text-muted)" }}>
+        {/* Meta */}
+        <div className="flex items-center gap-4 text-xs" style={{ color: "var(--text-muted)" }}>
           {question.totalMarks && (
-            <span className="flex items-center gap-1">
-              <Award size={12} /> {question.totalMarks} marks
-            </span>
+            <span className="flex items-center gap-1"><Award size={12} /> {question.totalMarks} marks</span>
           )}
           {question.timeMinutes && (
-            <span className="flex items-center gap-1">
-              <Clock size={12} /> {question.timeMinutes} min
-            </span>
+            <span className="flex items-center gap-1"><Clock size={12} /> {question.timeMinutes} min</span>
           )}
-          <span className="flex items-center gap-1">
-            <BookOpen size={12} /> {totalQs} questions
-          </span>
+          <span className="flex items-center gap-1"><BookOpen size={12} /> {totalQs} questions</span>
+          <span className="flex items-center gap-1"><Eye size={12} /> {question.viewsCount}</span>
         </div>
+      </Link>
 
-        {/* Footer: stats + CTA */}
-        <div
-          className="flex items-center justify-between pt-3 border-t border-white/5"
-        >
-          <div className="flex items-center gap-4 text-xs" style={{ color: "var(--text-muted)" }}>
-            <span className="flex items-center gap-1">
-              <Heart size={12} /> {question.likesCount}
-            </span>
-            <span className="flex items-center gap-1">
-              <MessageSquare size={12} /> {question.commentsCount}
-            </span>
-            <span className="flex items-center gap-1">
-              <Eye size={12} /> {question.viewsCount}
-            </span>
-          </div>
-          <span className="flex items-center gap-0.5 text-xs font-semibold text-indigo-400 group-hover:gap-1.5 transition-all">
-            View <ChevronRight size={13} />
-          </span>
-        </div>
-      </article>
-    </Link>
+      {/* Reaction bar — separate from Link */}
+      <div className="px-5 pb-4 pt-1 border-t border-white/5 mt-1">
+        <ReactionBar
+          questionId={question.id}
+          initialLikes={question.likesCount}
+          initialComments={question.commentsCount}
+          initialShares={question.sharesCount}
+          onCommentClick={() => router.push(`/q/${question.id}#comments`)}
+        />
+      </div>
+    </article>
   );
 }

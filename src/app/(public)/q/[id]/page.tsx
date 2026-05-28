@@ -1,14 +1,16 @@
 // src/app/(public)/q/[id]/page.tsx
 "use client";
 
-import { useEffect, useState } from "react";
-import { useParams, notFound } from "next/navigation";
+import { useEffect, useState, useRef } from "react";
+import { useParams } from "next/navigation";
 import Link from "next/link";
 import {
-  ArrowLeft, Clock, Award, Eye, Heart, MessageSquare,
-  BookOpen, Cpu, AlertCircle, Loader2, User
+  ArrowLeft, Clock, Award, Eye,
+  BookOpen, Cpu, AlertCircle, Loader2,
 } from "lucide-react";
 import QuestionRenderer from "@/components/question/QuestionRenderer";
+import ReactionBar from "@/components/question/ReactionBar";
+import CommentSection from "@/components/question/CommentSection";
 import type { Question } from "@/types/question";
 
 const DIFFICULTY_CONFIG = {
@@ -36,6 +38,8 @@ export default function QuestionDetailPage() {
   const [question, setQuestion] = useState<Question | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [commentOpen, setCommentOpen] = useState(false);
+  const commentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!id) return;
@@ -48,7 +52,19 @@ export default function QuestionDetailPage() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
+
+    // URL hash এ #comments থাকলে auto-open করো
+    if (window.location.hash === "#comments") {
+      setCommentOpen(true);
+    }
   }, [id]);
+
+  function handleCommentToggle() {
+    setCommentOpen((v) => !v);
+    if (!commentOpen) {
+      setTimeout(() => commentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }), 100);
+    }
+  }
 
   if (loading) {
     return (
@@ -81,22 +97,13 @@ export default function QuestionDetailPage() {
       />
 
       <div className="relative z-10 max-w-2xl mx-auto px-4 py-8">
-
         {/* Back */}
-        <Link
-          href="/q"
-          className="inline-flex items-center gap-2 text-sm mb-6 transition-colors hover:text-indigo-400"
-          style={{ color: "var(--text-muted)" }}
-        >
+        <Link href="/q" className="inline-flex items-center gap-2 text-sm mb-6 transition-colors hover:text-indigo-400" style={{ color: "var(--text-muted)" }}>
           <ArrowLeft size={15} /> Back to Feed
         </Link>
 
         {/* Question card */}
-        <article
-          className="rounded-2xl border border-white/5 overflow-hidden"
-          style={{ background: "var(--bg-card)" }}
-        >
-          {/* Top color bar */}
+        <article className="rounded-2xl border border-white/5 overflow-hidden mb-4" style={{ background: "var(--bg-card)" }}>
           <div className="h-1 w-full bg-gradient-to-r from-indigo-500 via-purple-500 to-cyan-500" />
 
           <div className="p-6">
@@ -134,29 +141,14 @@ export default function QuestionDetailPage() {
               <span className="text-xs font-semibold px-3 py-1 rounded-full text-indigo-400 bg-indigo-400/10">
                 {question.subject}
               </span>
-              <span className="text-xs px-3 py-1 rounded-full text-slate-400 bg-white/5">
-                {question.className}
-              </span>
-              {question.chapter && (
-                <span className="text-xs px-3 py-1 rounded-full text-slate-400 bg-white/5">
-                  {question.chapter}
-                </span>
-              )}
-              {question.topic && (
-                <span className="text-xs px-3 py-1 rounded-full text-slate-400 bg-white/5">
-                  {question.topic}
-                </span>
-              )}
-              <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${difficulty.className}`}>
-                {difficulty.label}
-              </span>
+              <span className="text-xs px-3 py-1 rounded-full text-slate-400 bg-white/5">{question.className}</span>
+              {question.chapter && <span className="text-xs px-3 py-1 rounded-full text-slate-400 bg-white/5">{question.chapter}</span>}
+              {question.topic && <span className="text-xs px-3 py-1 rounded-full text-slate-400 bg-white/5">{question.topic}</span>}
+              <span className={`text-xs font-semibold px-3 py-1 rounded-full border ${difficulty.className}`}>{difficulty.label}</span>
             </div>
 
-            {/* Meta */}
-            <div
-              className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-xl mb-6"
-              style={{ background: "var(--bg-secondary)" }}
-            >
+            {/* Meta grid */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 p-4 rounded-xl mb-6" style={{ background: "var(--bg-secondary)" }}>
               {[
                 { icon: Award, label: "Total Marks", value: question.totalMarks ? `${question.totalMarks}` : "—" },
                 { icon: Clock, label: "Duration", value: question.timeMinutes ? `${question.timeMinutes} min` : "—" },
@@ -171,26 +163,37 @@ export default function QuestionDetailPage() {
               ))}
             </div>
 
-            {/* Divider */}
             <div className="h-px bg-white/5 mb-6" />
 
             {/* Question content */}
             <QuestionRenderer content={question.content} />
+          </div>
 
-            {/* Footer stats */}
-            <div
-              className="flex items-center gap-5 mt-6 pt-5 border-t border-white/5 text-sm"
-              style={{ color: "var(--text-muted)" }}
-            >
-              <span className="flex items-center gap-1.5">
-                <Heart size={14} /> {question.likesCount} likes
-              </span>
-              <span className="flex items-center gap-1.5">
-                <MessageSquare size={14} /> {question.commentsCount} comments
-              </span>
-            </div>
+          {/* Reaction bar */}
+          <div className="px-6 py-3 border-t border-white/5" style={{ background: "var(--bg-secondary)" }}>
+            <ReactionBar
+              questionId={question.id}
+              initialLikes={question.likesCount}
+              initialComments={question.commentsCount}
+              initialShares={question.sharesCount}
+              showCommentToggle
+              commentOpen={commentOpen}
+              onCommentClick={handleCommentToggle}
+            />
           </div>
         </article>
+
+        {/* Comment section */}
+        {commentOpen && (
+          <div
+            ref={commentRef}
+            id="comments"
+            className="rounded-2xl border border-white/5 p-5"
+            style={{ background: "var(--bg-card)" }}
+          >
+            <CommentSection questionId={question.id} />
+          </div>
+        )}
       </div>
     </main>
   );
