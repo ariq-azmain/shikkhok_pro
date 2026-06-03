@@ -4,51 +4,50 @@ import { dark } from "@clerk/themes";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
+import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
 
 const inter = Inter({
-    subsets: ["latin"],
-    variable: "--font-inter",
-    display: "swap"
+  subsets: ["latin"],
+  variable: "--font-inter",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-    title: "Shikkhok Pro — AI-Powered Question Paper Generator for Bangladesh",
+  title: "Shikkhok Pro — AI-Powered Question Paper Generator for Bangladesh",
+  description:
+    "Create perfect exam question papers with AI. Built for Bangladesh NCTB curriculum — Classes 1-10, SSC & HSC. Secure question banks, social sharing, and organization management.",
+  keywords: [
+    "question paper generator",
+    "AI exam questions",
+    "Bangladesh education",
+    "NCTB curriculum",
+    "teacher platform",
+    "SSC HSC questions",
+  ],
+  openGraph: {
+    title: "Shikkhok Pro — AI-Powered Question Paper Generator",
     description:
-        "Create perfect exam question papers with AI. Built for Bangladesh NCTB curriculum — Classes 1-10, SSC & HSC. Secure question banks, social sharing, and organization management.",
-    keywords: [
-        "question paper generator",
-        "AI exam questions",
-        "Bangladesh education",
-        "NCTB curriculum",
-        "teacher platform",
-        "SSC HSC questions"
-    ],
-    openGraph: {
-        title: "Shikkhok Pro — AI-Powered Question Paper Generator",
-        description:
-            "Generate perfect NCTB-aligned exam papers in minutes. Secure question banks for every Bangladesh school.",
-        type: "website"
-    }
+      "Generate perfect NCTB-aligned exam papers in minutes. Secure question banks for every Bangladesh school.",
+    type: "website",
+  },
+  manifest: "/manifest.json",
 };
 
-export default function RootLayout({
-    children
-}: Readonly<{
-    children: React.ReactNode;
-}>) {
-    return (
-        <html lang="en" className="dark">
-            <body className={` ${inter.variable} antialiased`}>
-                <ClerkProvider
-                    appearance={{
-                        baseTheme: dark,
-                        cssLayerName: "clerk"
-                    }}
-                >
-                    {children}
-                    <Analytics />
-                </ClerkProvider>
-            </body>
-        </html>
-    );
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return (
+    <html lang="en" className="dark">
+      <body className={` ${inter.variable} antialiased`}>
+        <ClerkProvider
+          appearance={{
+            baseTheme: dark,
+            cssLayerName: "clerk",
+          }}
+        >
+          {children}
+          <Analytics />
+          <ServiceWorkerRegister />
+        </ClerkProvider>
+      </body>
+    </html>
+  );
 }
