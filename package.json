@@ -11,7 +11,7 @@
   "dependencies": {
      "@clerk/nextjs": "^7.3.3",
      "@clerk/themes": "^2.4.57",
-     "@ducanh2912/next-pwa": "^1.8.2",
+     "@ducanh2912/next-pwa": "latest",
      "@gsap/react": "^2.1.2",
      "@prisma/adapter-neon": "^6.11.0",
      "@prisma/client": "^6.11.0",
