@@ -9,8 +9,8 @@
 - [x] User Profile পেজ
 - [x] Public Feed (infinite scroll)
 - [x] Like / Comment / Share
-- [ ] Explore পেজ + Search
-- [ ] STUDENT / PARENT browse flow
+- [x] Explore পেজ + Search
+- [x] STUDENT / PARENT browse flow
 - [ ] PWA setup
 
 ## Phase 2 — Core Question Features (সপ্তাহ ৩-৪)
