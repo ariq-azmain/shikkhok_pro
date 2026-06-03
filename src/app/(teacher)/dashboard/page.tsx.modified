@@ -45,6 +45,10 @@ export default async function Page() {
 
   const userId = dbUser.id;
 
+  // Compute orgIds once and reuse for notices queries
+  const orgMembersRes = await supabase.from("org_members").select("orgId").eq("userId", userId);
+  const orgIds = orgMembersRes.data?.map((r: any) => r.orgId) ?? [];
+
   // Fetch overview data: recent tasks & notices + counts for quick summaries
   const [tasksPreviewRes, noticesPreviewRes, tasksCountRes, noticesCountRes] = await Promise.all([
     supabase
@@ -57,13 +61,28 @@ export default async function Page() {
     supabase
       .from("notices")
       .select(`id, title, type, isPinned, createdAt, org:organizations(id, name)`)
-      .in("orgId", (await supabase.from("org_members").select("orgId").eq("userId", userId)).data?.map((r: any) => r.orgId) ?? [])
+      .in("orgId", orgIds)
       .is("deletedAt", null)
       .order("createdAt", { ascending: false })
       .limit(4),
-    supabase.from("tasks").select("id", { count: "exact", head: true }).eq("assignedToId", userId),
-    supabase.from("notices").select("id", { count: "exact", head: true }).in("orgId", (await supabase.from("org_members").select("orgId").eq("userId", userId)).data?.map((r: any) => r.orgId) ?? []),
+    // counts should apply the same deletedAt filter
+    supabase.from("tasks").select("id", { count: "exact", head: true }).eq("assignedToId", userId).is("deletedAt", null),
+    supabase.from("notices").select("id", { count: "exact", head: true }).in("orgId", orgIds).is("deletedAt", null),
   ]);
+
+  if (tasksPreviewRes.error || noticesPreviewRes.error || tasksCountRes.error || noticesCountRes.error) {
+    console.error("[TeacherDashboard v2] overview query error:", {
+      tasksErr: tasksPreviewRes.error,
+      noticesErr: noticesPreviewRes.error,
+      tasksCountErr: tasksCountRes.error,
+      noticesCountErr: noticesCountRes.error,
+    });
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <p className="text-sm text-[var(--text-muted)]">Failed to load dashboard data.</p>
+      </main>
+    );
+  }
 
   const tasksPreview = tasksPreviewRes.data ?? [];
   const noticesPreview = noticesPreviewRes.data ?? [];
