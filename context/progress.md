@@ -1,32 +1,38 @@
 # 🚀 ডেভেলপমেন্ট ফেজ
 
 ## Phase 1 — Foundation (সপ্তাহ ১-২)
+
 - [x] Next.js প্রজেক্ট সেটআপ
 - [x] Clerk Auth ইন্টিগ্রেশন (Google/GitHub/Facebook)
 - [x] Onboarding: Account type select (TEACHER/STUDENT/PARENT)
 - [x] Superbase + PostgreSQL সেটআপ
 - [x] User Profile পেজ
-- [ ] Organization তৈরি (TEACHER → becomes ORG_PRINCIPAL)
-- [ ] Teacher add/assign system (subject + class)
+- [x] Public Feed (infinite scroll)
+- [x] Like / Comment / Share
+- [ ] Explore পেজ + Search
+- [ ] STUDENT / PARENT browse flow
+- [ ] PWA setup
 
 ## Phase 2 — Core Question Features (সপ্তাহ ৩-৪)
+
 - [ ] Question Bank CRUD (org only)
+- [ ] Teacher DashBoard
 - [ ] AI প্রশ্ন জেনারেটর (step-by-step wizard)
 - [ ] NCTB Curriculum data integration
 - [ ] Syllabus / Book file upload to AI
 - [ ] Question Editor (TipTap + shapes + icons)
 - [ ] AI inline suggestions in editor
 - [ ] Question export (PDF/DOCX/PNG/MD)
-- [ ] Visibility control (PUBLIC/SCHOOL/PRIVATE)
 
 ## Phase 3 — Social Features (সপ্তাহ ৫-৬)
-- [ ] Public Feed (infinite scroll)
-- [ ] Like / Comment / Share
-- [ ] Explore পেজ + Search
+
+- [ ] Organization তৈরি (TEACHER → becomes ORG_PRINCIPAL)
+- [ ] Teacher add/assign system (subject + class)
+- [ ] Visibility control (PUBLIC/SCHOOL/PRIVATE)
 - [ ] Notification system (push)
-- [ ] STUDENT / PARENT browse flow
 
 ## Phase 4 — Organization Tools (সপ্তাহ ৭-৮)
+
 - [ ] Task Management System (CRUD, submit, review, re-assign)
 - [ ] Task Notifications (mobile/desktop push)
 - [ ] Notice Board (CRUD, pin, types)
@@ -35,9 +41,9 @@
 - [ ] Group message permission control (PRINCIPAL/ADMIN)
 
 ## Phase 5 — Polish & Launch (সপ্তাহ ৯-১০)
+
 - [ ] Bangla font stability audit
 - [ ] Mobile responsive QA
-- [ ] PWA setup
 - [ ] Performance optimization (caching, search index)
 - [ ] Security audit (visibility rules, role checks)
-- [ ] Production deployment (Vercel + Neon)
+- [ ] Production deployment (Vercel + Superbase)
