@@ -11,7 +11,7 @@
 - [x] Like / Comment / Share
 - [x] Explore পেজ + Search
 - [x] STUDENT / PARENT browse flow
-- [ ] PWA setup
+- [x] PWA setup
 
 ## Phase 2 — Core Question Features (সপ্তাহ ৩-৪)
 
