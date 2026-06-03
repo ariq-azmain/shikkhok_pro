@@ -1,10 +1,10 @@
 "use client";
 
 import React from "react";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from "chart.js";
+import { Chart as ChartJS, Tooltip, Legend, CategoryScale, LinearScale, BarElement } from "chart.js";
 import { Bar } from "react-chartjs-2";
 
-ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarElement);
+ChartJS.register(Tooltip, Legend, CategoryScale, LinearScale, BarElement);
 
 export default function TasksChart({ labels, data }: any) {
   const chartData = {
@@ -18,5 +18,22 @@ export default function TasksChart({ labels, data }: any) {
     ],
   };
 
-  return <Bar data={chartData} />;
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { position: "top" as const },
+      tooltip: { mode: "index" },
+    },
+    scales: {
+      x: { stacked: false },
+      y: { beginAtZero: true },
+    },
+  };
+
+  return (
+    <div style={{ height: 240 }}>
+      <Bar data={chartData} options={options} />
+    </div>
+  );
 }

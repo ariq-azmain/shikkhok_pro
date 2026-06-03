@@ -1,5 +1,4 @@
 import { auth } from "@clerk/nextjs/server";
-import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import TeacherDashboardShell from "@/components/teacher-dashboard/TeacherDashboardShell";
 import { createClient } from "@/lib/supabase/server";
@@ -15,7 +14,7 @@ export default async function TeacherDashboardPage() {
     // Redirect to sign-in is handled by middleware elsewhere; return minimal UI
     return (
       <main className="min-h-screen flex items-center justify-center">
-        <p className="text-sm text-muted">Please sign in to view the dashboard.</p>
+        <p className="text-sm text-[var(--text-muted)]">Please sign in to view the dashboard.</p>
       </main>
     );
   }
@@ -33,7 +32,7 @@ export default async function TeacherDashboardPage() {
   if (!dbUser || dbUser.accountType !== "TEACHER") {
     return (
       <main className="min-h-screen flex items-center justify-center">
-        <p className="text-sm text-muted">Access denied. Teacher account required.</p>
+        <p className="text-sm text-[var(--text-muted)]">Access denied. Teacher account required.</p>
       </main>
     );
   }
@@ -52,7 +51,7 @@ export default async function TeacherDashboardPage() {
     supabase
       .from("questions")
       .select(`
-        id, title, subject, "className", difficulty, "likesCount", "commentsCount", "createdAt",
+        id, title, subject, "className", difficulty, "likesCount", "commentsCount", "createdAt", content,
         org:organizations(id, name, slug)
       `)
       .eq("createdById", userId)
@@ -87,6 +86,31 @@ export default async function TeacherDashboardPage() {
       .eq("postedById", userId),
   ]);
 
+  // Check for query errors and return an error UI if any occurred — avoid silently swallowing DB errors
+  if (
+    membershipsRes.error ||
+    questionsRes.error ||
+    tasksRes.error ||
+    commentsCountRes.error ||
+    likesCountRes.error ||
+    noticesPostedCountRes.error
+  ) {
+    console.error("[TeacherDashboardPage] Supabase query error:", {
+      membershipsResError: membershipsRes.error,
+      questionsResError: questionsRes.error,
+      tasksResError: tasksRes.error,
+      commentsCountResError: commentsCountRes.error,
+      likesCountResError: likesCountRes.error,
+      noticesPostedCountResError: noticesPostedCountRes.error,
+    });
+
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <p className="text-sm text-[var(--text-muted)]">Failed to load dashboard data. Please try again later.</p>
+      </main>
+    );
+  }
+
   const memberships = membershipsRes.data ?? [];
   const myQuestions = questionsRes.data ?? [];
   const tasksRows = tasksRes.data ?? [];
@@ -109,7 +133,7 @@ export default async function TeacherDashboardPage() {
   const orgIds = Array.from(new Set(memberships.map((m: any) => m.org?.id).filter(Boolean)));
   let notices: any[] = [];
   if (orgIds.length > 0) {
-    const { data: noticesRows } = await supabase
+    const { data: noticesRows, error: noticesErr } = await supabase
       .from("notices")
       .select(`
         id, orgId, title, description, type, isPinned, createdAt,
@@ -119,7 +143,12 @@ export default async function TeacherDashboardPage() {
       .is("deletedAt", null)
       .order("createdAt", { ascending: false })
       .limit(20);
-    notices = noticesRows ?? [];
+    if (noticesErr) {
+      console.error("[TeacherDashboardPage] notices query error:", noticesErr);
+      notices = [];
+    } else {
+      notices = noticesRows ?? [];
+    }
   }
 
   // compute simple stats

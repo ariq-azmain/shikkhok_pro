@@ -4,14 +4,15 @@ function StatPill({ label, value }: { label: string; value: number }) {
   return (
     <div className="inline-flex flex-col items-center justify-center px-3 py-2 bg-white/3 rounded-lg">
       <div className="text-sm font-semibold">{value}</div>
-      <div className="text-xs text-muted">{label}</div>
+      <div className="text-xs text-[var(--text-muted)]">{label}</div>
     </div>
   );
 }
 
 export default function TaskStats({ stats }: any) {
   return (
-    <div className="flex items-center gap-3">
+    // allow wrapping on small screens to prevent overflow
+    <div className="flex items-center gap-3 flex-wrap">
       <StatPill label="Pending" value={stats.tasksPending ?? 0} />
       <StatPill label="In Progress" value={stats.tasksInProgress ?? 0} />
       <StatPill label="Submitted" value={stats.tasksSubmitted ?? 0} />

@@ -21,5 +21,15 @@ export default function ActivityPieChart({ data }: any) {
     ],
   };
 
-  return <Doughnut data={chartData} />;
+  const options = {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: { legend: { position: "bottom" as const } },
+  };
+
+  return (
+    <div style={{ height: 260 }}>
+      <Doughnut data={chartData} options={options} />
+    </div>
+  );
 }
