@@ -14,6 +14,13 @@ interface Filters {
   difficulty: string;
 }
 
+/**
+ * Render a skeleton placeholder card that mimics the layout of a question item.
+ *
+ * The component uses layout blocks and pulse animation to indicate loading state.
+ *
+ * @returns A JSX element representing a skeleton card placeholder for question items
+ */
 function SkeletonCard() {
   return (
     <div className="rounded-2xl p-5 border border-white/5 animate-pulse" style={{ background: "var(--bg-card)" }}>
@@ -41,6 +48,15 @@ function SkeletonCard() {
   );
 }
 
+/**
+ * Page component that displays a searchable and filterable feed of questions with infinite scroll.
+ *
+ * Renders a search bar, optional filter panel (subject, class, difficulty), client-side text filtering
+ * over fetched questions, loading skeletons, error and empty states, question cards, and a sentinel
+ * for loading additional pages.
+ *
+ * @returns The JSX element tree for the Explore page UI
+ */
 export default function ExplorePage() {
   const [filters, setFilters] = useState<Filters>({ subject: "", className: "", difficulty: "" });
   const [showFilters, setShowFilters] = useState(true);

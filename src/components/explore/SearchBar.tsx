@@ -3,6 +3,14 @@
 
 import { Search } from "lucide-react";
 
+/**
+ * Renders a controlled search input with an inline search icon.
+ *
+ * @param value - Current input text shown in the field.
+ * @param onChange - Callback invoked with the updated input string when the user types.
+ * @param placeholder - Optional placeholder text shown when `value` is empty; defaults to `"Search..."`.
+ * @returns The rendered search input element (JSX).
+ */
 export default function SearchBar({
   value,
   onChange,

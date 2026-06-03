@@ -13,6 +13,11 @@ interface Filters {
   difficulty: string;
 }
 
+/**
+ * Renders a skeleton (loading placeholder) card that matches the question card layout.
+ *
+ * @returns A JSX element representing a styled skeleton card used while question content is loading.
+ */
 function SkeletonCard() {
   return (
     <div className="rounded-2xl p-5 border border-white/5 animate-pulse" style={{ background: "var(--bg-card)" }}>
@@ -40,6 +45,14 @@ function SkeletonCard() {
   );
 }
 
+/**
+ * Render the Feed page with filter controls, list of questions, and pagination UI.
+ *
+ * Manages local filter state and filter-panel visibility, displays loading skeletons, error or empty states,
+ * shows active filter count on the filter button, and includes an intersection sentinel for infinite scrolling.
+ *
+ * @returns The page's JSX element containing the header, filter controls, question list (or empty state), loading indicators, error UI, and an infinite-scroll sentinel.
+ */
 export default function FeedPage() {
   const [filters, setFilters] = useState<Filters>({ subject: "", className: "", difficulty: "" });
   const [showFilters, setShowFilters] = useState(false);
