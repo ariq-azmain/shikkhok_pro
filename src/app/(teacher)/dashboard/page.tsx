@@ -41,7 +41,7 @@ export default async function TeacherDashboardPage() {
   const userId = dbUser.id;
 
   // Fetch aggregated data (similar to the API route) — keep server-side to avoid extra client fetch
-  const [membershipsRes, questionsRes, tasksRes] = await Promise.all([
+  const [membershipsRes, questionsRes, tasksRes, commentsCountRes, likesCountRes, noticesPostedCountRes] = await Promise.all([
     supabase
       .from("org_members")
       .select(`
@@ -70,11 +70,31 @@ export default async function TeacherDashboardPage() {
       .is("deletedAt", null)
       .order("createdAt", { ascending: false })
       .limit(200),
+    // Activity counts: comments made by this user
+    supabase
+      .from("comments")
+      .select("*", { count: "exact", head: true })
+      .eq("userId", userId),
+    // Activity counts: likes made by this user
+    supabase
+      .from("likes")
+      .select("*", { count: "exact", head: true })
+      .eq("userId", userId),
+    // Activity counts: notices posted by this user
+    supabase
+      .from("notices")
+      .select("*", { count: "exact", head: true })
+      .eq("postedById", userId),
   ]);
 
   const memberships = membershipsRes.data ?? [];
   const myQuestions = questionsRes.data ?? [];
   const tasksRows = tasksRes.data ?? [];
+
+  // Extract count values (Supabase returns { count: number | null })
+  const commentsCount = commentsCountRes.count ?? 0;
+  const likesCount = likesCountRes.count ?? 0;
+  const noticesPostedCount = noticesPostedCountRes.count ?? 0;
 
   // group tasks by org
   const tasksByOrg: Record<string, any> = {};
@@ -130,6 +150,14 @@ export default async function TeacherDashboardPage() {
 
   const orgsOwned = orgsMember.filter((o: any) => o.role === "ORG_PRINCIPAL");
 
+  // Activity breakdown for the pie chart
+  const activity = {
+    questionsCreated: myQuestions.length,
+    commentsMade: commentsCount,
+    likesMade: likesCount,
+    noticesPosted: noticesPostedCount,
+  };
+
   // Render the dashboard shell and pass the aggregated data as props
   return (
     <main className="min-h-screen" style={{ background: "var(--bg-primary)" }}>
@@ -142,6 +170,7 @@ export default async function TeacherDashboardPage() {
           tasksByOrg={tasksByOrg}
           notices={notices}
           stats={stats}
+          activity={activity}
           tasksChart={{ labels: statusLabels, data: statusCounts }}
         />
       </div>
