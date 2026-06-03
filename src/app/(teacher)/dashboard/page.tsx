@@ -1,0 +1,208 @@
+import { auth } from "@clerk/nextjs/server";
+import type { Metadata } from "next";
+import TeacherDashboardShell from "@/components/teacher-dashboard/TeacherDashboardShell";
+import { createClient } from "@/lib/supabase/server";
+
+export const metadata: Metadata = {
+  title: "Teacher Dashboard — Shikkhok Pro",
+};
+
+export default async function TeacherDashboardPage() {
+  // Server-side auth check using Clerk
+  const { userId: clerkId } = await auth();
+  if (!clerkId) {
+    // Redirect to sign-in is handled by middleware elsewhere; return minimal UI
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <p className="text-sm text-[var(--text-muted)]">Please sign in to view the dashboard.</p>
+      </main>
+    );
+  }
+
+  // Use server-side Supabase client that forwards cookies (see src/lib/supabase/server.ts)
+  const supabase = await createClient();
+
+  // Resolve project user by clerkId
+  const { data: dbUser } = await supabase
+    .from("users")
+    .select("id, displayName, accountType")
+    .eq("clerkId", clerkId)
+    .maybeSingle();
+
+  if (!dbUser || dbUser.accountType !== "TEACHER") {
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <p className="text-sm text-[var(--text-muted)]">Access denied. Teacher account required.</p>
+      </main>
+    );
+  }
+
+  const userId = dbUser.id;
+
+  // Fetch aggregated data (similar to the API route) — keep server-side to avoid extra client fetch
+  const [membershipsRes, questionsRes, tasksRes, commentsCountRes, likesCountRes, noticesPostedCountRes] = await Promise.all([
+    supabase
+      .from("org_members")
+      .select(`
+        id, role, subjects, classes, joinedAt,
+        org:organizations ( id, name, slug, logo, type )
+      `)
+      .eq("userId", userId),
+    supabase
+      .from("questions")
+      .select(`
+        id, title, subject, "className", difficulty, "likesCount", "commentsCount", "createdAt", content,
+        org:organizations(id, name, slug)
+      `)
+      .eq("createdById", userId)
+      .is("deletedAt", null)
+      .order("createdAt", { ascending: false })
+      .limit(20),
+    supabase
+      .from("tasks")
+      .select(`
+        id, title, description, status, assignDate, expireDate, updatedAt, createdAt,
+        org:organizations(id, name),
+        assignedBy:users!tasks_assignedById_fkey ( id, username, "displayName" )
+      `)
+      .eq("assignedToId", userId)
+      .is("deletedAt", null)
+      .order("createdAt", { ascending: false })
+      .limit(200),
+    // Activity counts: comments made by this user
+    supabase
+      .from("comments")
+      .select("*", { count: "exact", head: true })
+      .eq("userId", userId),
+    // Activity counts: likes made by this user
+    supabase
+      .from("likes")
+      .select("*", { count: "exact", head: true })
+      .eq("userId", userId),
+    // Activity counts: notices posted by this user
+    supabase
+      .from("notices")
+      .select("*", { count: "exact", head: true })
+      .eq("postedById", userId),
+  ]);
+
+  // Check for query errors and return an error UI if any occurred — avoid silently swallowing DB errors
+  if (
+    membershipsRes.error ||
+    questionsRes.error ||
+    tasksRes.error ||
+    commentsCountRes.error ||
+    likesCountRes.error ||
+    noticesPostedCountRes.error
+  ) {
+    console.error("[TeacherDashboardPage] Supabase query error:", {
+      membershipsResError: membershipsRes.error,
+      questionsResError: questionsRes.error,
+      tasksResError: tasksRes.error,
+      commentsCountResError: commentsCountRes.error,
+      likesCountResError: likesCountRes.error,
+      noticesPostedCountResError: noticesPostedCountRes.error,
+    });
+
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <p className="text-sm text-[var(--text-muted)]">Failed to load dashboard data. Please try again later.</p>
+      </main>
+    );
+  }
+
+  const memberships = membershipsRes.data ?? [];
+  const myQuestions = questionsRes.data ?? [];
+  const tasksRows = tasksRes.data ?? [];
+
+  // Extract count values (Supabase returns { count: number | null })
+  const commentsCount = commentsCountRes.count ?? 0;
+  const likesCount = likesCountRes.count ?? 0;
+  const noticesPostedCount = noticesPostedCountRes.count ?? 0;
+
+  // group tasks by org
+  const tasksByOrg: Record<string, any> = {};
+  tasksRows.forEach((t: any) => {
+    const org = t.org ?? { id: null, name: "Unknown" };
+    const orgId = org.id ?? "unknown";
+    if (!tasksByOrg[orgId]) tasksByOrg[orgId] = { org, tasks: [] };
+    tasksByOrg[orgId].tasks.push(t);
+  });
+
+  // fetch notices for orgs
+  const orgIds = Array.from(new Set(memberships.map((m: any) => m.org?.id).filter(Boolean)));
+  let notices: any[] = [];
+  if (orgIds.length > 0) {
+    const { data: noticesRows, error: noticesErr } = await supabase
+      .from("notices")
+      .select(`
+        id, orgId, title, description, type, isPinned, createdAt,
+        postedBy:users!notices_postedById_fkey ( id, username, "displayName" )
+      `)
+      .in("orgId", orgIds)
+      .is("deletedAt", null)
+      .order("createdAt", { ascending: false })
+      .limit(20);
+    if (noticesErr) {
+      console.error("[TeacherDashboardPage] notices query error:", noticesErr);
+      notices = [];
+    } else {
+      notices = noticesRows ?? [];
+    }
+  }
+
+  // compute simple stats
+  const tasksAll = tasksRows;
+  const statusLabels = ["PENDING", "IN_PROGRESS", "SUBMITTED", "APPROVED", "REJECTED"];
+  const statusCounts = statusLabels.map((label) => tasksAll.filter((t: any) => t.status === label).length);
+
+  const stats = {
+    tasksPending: statusCounts[0],
+    tasksInProgress: statusCounts[1],
+    tasksSubmitted: statusCounts[2],
+    tasksDone: statusCounts[3],
+    tasksRejected: statusCounts[4],
+    questionsCreated: myQuestions.length,
+  };
+
+  const orgsMember = memberships.map((m: any) => ({
+    id: m.org?.id,
+    name: m.org?.name,
+    slug: m.org?.slug,
+    logo: m.org?.logo,
+    type: m.org?.type,
+    role: m.role,
+    subjects: m.subjects,
+    classes: m.classes,
+    joinedAt: m.joinedAt,
+  }));
+
+  const orgsOwned = orgsMember.filter((o: any) => o.role === "ORG_PRINCIPAL");
+
+  // Activity breakdown for the pie chart
+  const activity = {
+    questionsCreated: myQuestions.length,
+    commentsMade: commentsCount,
+    likesMade: likesCount,
+    noticesPosted: noticesPostedCount,
+  };
+
+  // Render the dashboard shell and pass the aggregated data as props
+  return (
+    <main className="min-h-screen" style={{ background: "var(--bg-primary)" }}>
+      <div className="max-w-6xl mx-auto px-4 py-8">
+        <TeacherDashboardShell
+          user={{ id: userId, displayName: dbUser.displayName }}
+          orgsOwned={orgsOwned}
+          orgsMember={orgsMember}
+          myQuestions={myQuestions}
+          tasksByOrg={tasksByOrg}
+          notices={notices}
+          stats={stats}
+          activity={activity}
+          tasksChart={{ labels: statusLabels, data: statusCounts }}
+        />
+      </div>
+    </main>
+  );
+}
