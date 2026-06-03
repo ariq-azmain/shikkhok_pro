@@ -1,12 +1,10 @@
-// Stub pages for teacher routes — empty for now; user will fill later
+export const metadata = {
+  title: "Tasks — Shikkhok Pro",
+  description: "Coming soon — tasks manager for assigning and tracking student work.",
+};
+
+import PlaceholderPage from "@/components/teacher/dashboard/PlaceholderPage";
 
 export default function TasksPage() {
-  return (
-    <main className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-2xl font-semibold">Tasks</h1>
-        <p className="text-sm text-[var(--text-muted)] mt-2">Coming soon — task manager page.</p>
-      </div>
-    </main>
-  );
+  return <PlaceholderPage title="Tasks" description="Coming soon — task manager page." />;
 }

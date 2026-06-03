@@ -1,10 +1,10 @@
+export const metadata = {
+  title: "Question Banks — Shikkhok Pro",
+  description: "Coming soon — question banks for creating and organizing assessments.",
+};
+
+import PlaceholderPage from "@/components/teacher/dashboard/PlaceholderPage";
+
 export default function BanksPage() {
-  return (
-    <main className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <h1 className="text-2xl font-semibold">Question Banks</h1>
-        <p className="text-sm text-[var(--text-muted)] mt-2">Coming soon — question banks.</p>
-      </div>
-    </main>
-  );
+  return <PlaceholderPage title="Question Banks" description="Coming soon — question banks for creating and organizing assessments." />;
 }
