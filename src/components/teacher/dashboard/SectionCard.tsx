@@ -7,7 +7,7 @@ export default function SectionCard<T extends Record<string, unknown>>(props: Se
   const { title, count, href, items, type, isLoading } = props;
 
   return (
-    <div className="rounded-xl border border-white/10 p-4 bg-[var(--bg-card)] h-full flex flex-col justify-between">
+    <div className="rounded-xl border border-muted-10 p-4 bg-[var(--bg-card)] h-full flex flex-col justify-between">
       <div>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-base font-semibold">{title}</h3>
@@ -23,6 +23,16 @@ export default function SectionCard<T extends Record<string, unknown>>(props: Se
                 return <TaskCard key={(item as any).id} task={item as any} />;
               } else if (type === "notices") {
                 return <NoticeCard key={(item as any).id} notice={item as any} />;
+              }
+
+              // Editor/Quick Links: render as anchor if href exists, otherwise plain text
+              const itemWithHref = item as any;
+              if (itemWithHref?.href) {
+                return (
+                  <Link key={itemWithHref.id} href={itemWithHref.href} className="text-sm text-indigo-400 hover:text-indigo-300 block">
+                    {itemWithHref.title || itemWithHref.name || itemWithHref.id}
+                  </Link>
+                );
               }
 
               return (

@@ -17,8 +17,9 @@ const statusIcon: Record<string, JSX.Element> = {
 export default function TaskCard({ task, onClick }: TaskCardProps) {
   return (
     <button
+      type="button"
       onClick={() => onClick?.(task.id)}
-      className="w-full text-left p-3 rounded-lg bg-muted-10 hover:bg-muted-20 transition border border-white/10"
+      className="w-full text-left p-3 rounded-lg bg-muted-10 hover:bg-muted-20 transition border border-muted-10"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
@@ -28,7 +29,7 @@ export default function TaskCard({ task, onClick }: TaskCardProps) {
         <div className="flex-shrink-0">{statusIcon[task.status]}</div>
       </div>
       <div className="mt-2 flex items-center justify-between">
-        <span className="text-xs px-2 py-1 rounded-full bg-white/5 text-[var(--text-secondary)]">{task.status}</span>
+        <span className="text-xs px-2 py-1 rounded-full bg-muted-20 text-[var(--text-secondary)]">{task.status}</span>
         {task.expireDate && (
           <span className="text-xs text-muted">{new Date(task.expireDate).toLocaleDateString()}</span>
         )}

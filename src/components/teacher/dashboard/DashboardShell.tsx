@@ -20,8 +20,8 @@ export default function DashboardShell({ user, tasksPreview, noticesPreview, tas
             <SectionCard
               title="Quick Links"
               count={0}
-              href="/editor"
-              items={[{ id: "1", title: "Create Question", href: "/create/editor" }, { id: "2", title: "Question Banks", href: "/banks" }]}
+              href="/question-editor"
+              items={[{ id: "1", title: "Create Question", href: "/question-editor" }, { id: "2", title: "Question Banks", href: "/banks" }]}
               type="editor"
             />
           </div>
