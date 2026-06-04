@@ -1,0 +1,28 @@
+/* src/styles/style.css
+   Utility classes to normalize opacities and repeated patterns.
+   Tailwind v4 prefers explicit opacity numbers like /20 etc.
+   These utilities are small helpers to minimize repeating long class lists.
+*/
+
+/* background helpers (white at 20%) */
+.bg-muted-20 { background-color: rgba(255,255,255,0.20); }
+.bg-muted-10 { background-color: rgba(255,255,255,0.10); }
+.bg-muted-05 { background-color: rgba(255,255,255,0.05); }
+.text-muted { color: var(--text-muted); }
+.card-bg { background: var(--bg-card); }
+.page-bg { background: var(--bg-primary); }
+
+/* subtle borders */
+.border-muted { border-color: rgba(255,255,255,0.05); }
+.border-muted-2 { border-color: rgba(255,255,255,0.08); }
+
+/* overlays */
+.bg-overlay-dark { background-color: rgba(0,0,0,0.40); }
+
+/* small helpers */
+.avatar-sm { width: 2.25rem; height: 2.25rem; }
+.rounded-card { border-radius: 1rem; }
+.kbd { padding: .15rem .35rem; border-radius: .25rem; background: rgba(0,0,0,0.3); font-weight:600; }
+
+/* focus ring helper */
+.ring-focus { box-shadow: 0 0 0 3px rgba(99,102,241,0.12); }
