@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import type { Metadata } from "next";
 import DashboardShell from "@/components/teacher/dashboard/DashboardShell";
 import { createClient } from "@/lib/supabase/server";
+import DashboardLayout from "@/components/teacher/dashboard/DashboardLayout";
 
 export const metadata: Metadata = {
   title: "Teacher Dashboard — Shikkhok Pro",
@@ -62,7 +63,7 @@ export default async function Page() {
       .order("createdAt", { ascending: false })
       .limit(4),
     supabase.from("tasks").select("id", { count: "exact", head: true }).eq("assignedToId", userId),
-    supabase.from("notices").select("id", { count: "exact", head: true }).in("orgId", (await supabase.from("org_members").select("orgId").eq("userId", userId)).data?.map((r: any) => r.orgId) ?? []),
+    supabase.from("notices").select("id", { count: "exact", head: true }).in("orgId", (await supabase.from("org_members").select("orgId").eq("userId", userId)).data?.map((r: any) => r.orgId) ?? [])
   ]);
 
   const tasksPreview = tasksPreviewRes.data ?? [];
@@ -71,6 +72,8 @@ export default async function Page() {
   const noticesCount = noticesCountRes.count ?? 0;
 
   return (
-    <DashboardShell user={dbUser} tasksPreview={tasksPreview} noticesPreview={noticesPreview} tasksCount={tasksCount} noticesCount={noticesCount} />
+    <DashboardLayout user={dbUser}>
+      <DashboardShell user={dbUser} tasksPreview={tasksPreview} noticesPreview={noticesPreview} tasksCount={tasksCount} noticesCount={noticesCount} />
+    </DashboardLayout>
   );
 }
