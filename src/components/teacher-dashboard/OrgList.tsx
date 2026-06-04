@@ -14,7 +14,7 @@ export default function OrgList({ orgsOwned, orgsMember }: any) {
           <div className="space-y-2">
             {orgsOwned.map((o: any) => (
               <div key={o.id} className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-sm">{o.name?.[0]}</div>
+                <div className="w-9 h-9 rounded-full bg-muted-10 flex items-center justify-center text-sm">{o.name?.[0]}</div>
                 <div>
                   <div className="font-medium">{o.name}</div>
                   <div className="text-xs text-[var(--text-muted)]">{o.type}</div>
@@ -31,7 +31,7 @@ export default function OrgList({ orgsOwned, orgsMember }: any) {
           {memberOnly && memberOnly.length > 0 ? (
             memberOnly.map((o: any) => (
               <div key={o.id} className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-sm">{o.name?.[0]}</div>
+                <div className="w-9 h-9 rounded-full bg-muted-10 flex items-center justify-center text-sm">{o.name?.[0]}</div>
                 <div>
                   <div className="font-medium">{o.name}</div>
                   <div className="text-xs text-[var(--text-muted)]">{o.role}</div>
