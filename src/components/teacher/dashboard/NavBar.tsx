@@ -1,6 +1,6 @@
 // src/components/teacher/dashboard/NavBar.tsx
 import Link from "next/link";
-import Image from "next/image";
+import type { DashboardUser } from "@/types";
 
 export default function NavBar({ user }: any) {
   const profileUrl = user?.username ? `/profile/${user.username}` : "/profile";
