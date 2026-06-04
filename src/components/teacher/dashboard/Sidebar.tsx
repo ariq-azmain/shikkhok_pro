@@ -1,9 +1,10 @@
 // src/components/teacher/dashboard/Sidebar.tsx
 "use client";
+
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { BookOpen, Inbox, MessageSquare, FileText, Settings } from "lucide-react";
+import { BookOpen, Inbox, MessageSquare, FileText, Settings, Menu, X } from "lucide-react";
 
 export default function Sidebar({ username }: { username?: string }) {
   const [open, setOpen] = useState(false);
@@ -23,7 +24,7 @@ export default function Sidebar({ username }: { username?: string }) {
       {/* Mobile top bar */}
       <div className="sm:hidden flex items-center justify-between p-3">
         <button onClick={() => setOpen(true)} aria-label="Open menu" className="p-2 rounded-md bg-muted-10">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 12h18" /></svg>
+          <Menu size={18} />
         </button>
         <div className="font-semibold">Menu</div>
       </div>
@@ -53,11 +54,11 @@ export default function Sidebar({ username }: { username?: string }) {
           <div className="absolute left-0 top-0 bottom-0 w-72 card-bg p-4">
             <div className="flex items-center justify-between mb-4">
               <div className="font-semibold">Menu</div>
-              <button onClick={() => setOpen(false)} className="p-2 rounded-md bg-muted-10">✕</button>
+              <button onClick={() => setOpen(false)} className="p-2 rounded-md bg-muted-10"><X size={18} /></button>
             </div>
             <nav className="space-y-2">
               {nav.map((item) => (
-                <Link key={item.href} href={item.href} onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted-05">
+                <Link key={item.href} href={item.href} onClick={() => setOpen(false)} className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted-20">
                   <item.icon size={18} />
                   <span className="text-sm">{item.label}</span>
                 </Link>

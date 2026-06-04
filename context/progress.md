@@ -15,8 +15,8 @@
 
 ## Phase 2 — Core Question Features (সপ্তাহ ৩-৪)
 
+- [x] Teacher DashBoard
 - [ ] Question Bank CRUD (org only)
-- [ ] Teacher DashBoard
 - [ ] AI প্রশ্ন জেনারেটর (step-by-step wizard)
 - [ ] NCTB Curriculum data integration
 - [ ] Syllabus / Book file upload to AI
