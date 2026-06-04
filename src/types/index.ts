@@ -18,3 +18,6 @@ export type * from "./question";
 
 // Organization, tasks, notices, notifications
 export type * from "./org";
+
+// Dashboard specific types
+export type * from "./dashboard";
