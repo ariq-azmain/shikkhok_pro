@@ -11,14 +11,14 @@ export default function TopCharts() {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div className="lg:col-span-2 rounded-2xl p-4 bg-[var(--bg-card)] border border-white/5">
+      <div className="lg:col-span-2 rounded-2xl p-4 bg-[var(--bg-card)] border border-muted-10">
         <h3 className="text-lg font-semibold mb-3">Tasks Overview</h3>
         <div style={{ height: 260 }}>
           <TasksChart labels={demoLabels} data={demoData} />
         </div>
       </div>
 
-      <div className="rounded-2xl p-4 bg-[var(--bg-card)] border border-white/5">
+      <div className="rounded-2xl p-4 bg-[var(--bg-card)] border border-muted-10">
         <h3 className="text-lg font-semibold mb-3">Activity</h3>
         <div style={{ height: 260 }}>
           <ActivityPieChart data={demoActivity} />

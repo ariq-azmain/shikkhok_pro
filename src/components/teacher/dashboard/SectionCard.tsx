@@ -1,28 +1,51 @@
 import Link from "next/link";
+import type { SectionCardProps } from "@/types";
+import TaskCard from "./TaskCard";
+import NoticeCard from "./NoticeCard";
 
-export default function SectionCard({ title, count, href, items, type }: any) {
+export default function SectionCard<T extends Record<string, unknown>>(props: SectionCardProps<T>) {
+  const { title, count, href, items, type, isLoading } = props;
+
   return (
-    <div className="rounded-2xl p-4 bg-[var(--bg-card)] border border-white/5 h-full flex flex-col justify-between">
+    <div className="rounded-xl border border-muted-10 p-4 bg-[var(--bg-card)] h-full flex flex-col justify-between">
       <div>
-        <div className="flex items-center justify-between">
-          <h4 className="text-md font-semibold">{title}</h4>
-          <div className="text-sm text-[var(--text-muted)]">{count}</div>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-base font-semibold">{title}</h3>
+          <span className="text-sm px-2 py-1 rounded-full bg-muted-10 text-[var(--text-secondary)]">{count}</span>
         </div>
 
-        <div className="mt-3 space-y-2">
-          {items && items.length > 0 ? (
-            items.map((it: any) => (
-              <div key={it.id} className="text-sm text-[var(--text-muted)]">{it.title ?? it.name ?? it.id}</div>
-            ))
-          ) : (
-            <div className="text-sm text-[var(--text-muted)]">No items</div>
-          )}
-        </div>
+        {isLoading ? (
+          <div className="text-sm text-[var(--text-muted)]">Loading...</div>
+        ) : items && items.length > 0 ? (
+          <div className="space-y-2">
+            {items.slice(0, 3).map((item: any) => {
+              if (type === "tasks") {
+                return <TaskCard key={(item as any).id} task={item as any} />;
+              } else if (type === "notices") {
+                return <NoticeCard key={(item as any).id} notice={item as any} />;
+              }
+
+              // Editor/Quick Links: render as anchor if href exists, otherwise plain text
+              const itemWithHref = item as any;
+              if (itemWithHref?.href) {
+                return (
+                  <Link key={itemWithHref.id} href={itemWithHref.href} className="text-sm text-indigo-400 hover:text-indigo-300 block">
+                    {itemWithHref.title || itemWithHref.name || itemWithHref.id}
+                  </Link>
+                );
+              }
+
+              return (
+                <div key={(item as any).id} className="text-sm text-[var(--text-muted)]">{(item as any).title || (item as any).name || (item as any).id}</div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="text-sm text-[var(--text-muted)]">No items</div>
+        )}
       </div>
 
-      <div className="mt-4">
-        <Link href={href} className="text-sm font-semibold text-indigo-400 hover:underline">Learn more →</Link>
-      </div>
+      <Link href={href} className="mt-4 text-sm font-medium text-indigo-400 hover:text-indigo-300 transition">View all →</Link>
     </div>
   );
 }

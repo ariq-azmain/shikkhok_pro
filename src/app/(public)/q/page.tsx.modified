@@ -1,7 +1,5 @@
-// src/app/(public)/q/page.tsx
-"use client";
-
-import { useState } from "react";
+/* Adjustments in public questions page: replace tailwind v3 fractional opacity classes with utility classes */
+import React, { useState } from "react";
 import { BookOpen } from "lucide-react";
 import QuestionCard from "@/components/question/QuestionCard";
 import FeedFilters from "@/components/question/FeedFilters";
@@ -84,7 +82,9 @@ export default function QuestionsPage() {
           >
             Filter
             {activeFilterCount > 0 && (
-              <span className="w-5 h-5 rounded-full bg-indigo-500 text-white text-xs flex items-center justify-center">{activeFilterCount}</span>
+              <span className="w-5 h-5 rounded-full bg-indigo-500 text-white text-xs flex items-center justify-center">
+                {activeFilterCount}
+              </span>
             )}
           </button>
         </div>

@@ -1,11 +1,10 @@
 // src/components/teacher-dashboard/OrgList.tsx
 import React from "react";
+import type { OrgSummary } from "@/types";
 
-// OrgList shows owned orgs first and other member orgs below
-export default function OrgList({ orgsOwned, orgsMember }: any) {
-  // Filter out owned orgs from member list to avoid duplication
-  const ownedIds = new Set((orgsOwned || []).map((o: any) => o.id));
-  const memberOnly = (orgsMember || []).filter((o: any) => !ownedIds.has(o.id));
+export default function OrgList({ orgsOwned, orgsMember }: { orgsOwned?: OrgSummary[]; orgsMember?: OrgSummary[] }) {
+  const ownedIds = new Set((orgsOwned || []).map((o) => o.id));
+  const memberOnly = (orgsMember || []).filter((o) => !ownedIds.has(o.id));
 
   return (
     <div className="space-y-2">
@@ -13,7 +12,7 @@ export default function OrgList({ orgsOwned, orgsMember }: any) {
         <div>
           <p className="text-xs font-semibold mb-2">Owned</p>
           <div className="space-y-2">
-            {orgsOwned.map((o: any) => (
+            {orgsOwned.map((o) => (
               <div key={o.id} className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-muted-20 flex items-center justify-center text-sm">{o.name?.[0]}</div>
                 <div>
@@ -30,7 +29,7 @@ export default function OrgList({ orgsOwned, orgsMember }: any) {
         <p className="text-xs font-semibold mb-2">Member</p>
         <div className="space-y-2">
           {memberOnly && memberOnly.length > 0 ? (
-            memberOnly.map((o: any) => (
+            memberOnly.map((o) => (
               <div key={o.id} className="flex items-center gap-3">
                 <div className="w-9 h-9 rounded-full bg-muted-20 flex items-center justify-center text-sm">{o.name?.[0]}</div>
                 <div>
