@@ -43,4 +43,5 @@ next-env.d.ts
 
 
 # ai agents
-.agents
+.agents/
+.env*.local
