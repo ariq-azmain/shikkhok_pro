@@ -33,7 +33,7 @@ export default function Sidebar({ username }: { username?: string }) {
     return (
         <>
             {/* Mobile top bar */}
-            <div className="sm:hidden flex items-star justify-between p-3">
+            <div className="sm:hidden flex items-star justify-between p-3 h-fit">
                 <button
                     type="button"
                     onClick={() => setOpen(true)}
