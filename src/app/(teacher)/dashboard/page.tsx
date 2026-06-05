@@ -2,7 +2,6 @@ import { auth } from "@clerk/nextjs/server";
 import type { Metadata } from "next";
 import DashboardShell from "@/components/teacher/dashboard/DashboardShell";
 import { createClient } from "@/lib/supabase/server";
-import DashboardLayout from "@/components/teacher/dashboard/DashboardLayout";
 
 export const metadata: Metadata = {
   title: "Teacher Dashboard — Shikkhok Pro",
@@ -72,8 +71,6 @@ export default async function Page() {
   const noticesCount = noticesCountRes.count ?? 0;
 
   return (
-    <DashboardLayout user={dbUser}>
-      <DashboardShell user={dbUser} tasksPreview={tasksPreview} noticesPreview={noticesPreview} tasksCount={tasksCount} noticesCount={noticesCount} />
-    </DashboardLayout>
+    <DashboardShell user={dbUser} tasksPreview={tasksPreview} noticesPreview={noticesPreview} tasksCount={tasksCount} noticesCount={noticesCount} />
   );
 }
