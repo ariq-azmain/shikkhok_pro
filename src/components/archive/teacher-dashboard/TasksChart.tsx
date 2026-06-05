@@ -6,7 +6,7 @@ import { Bar } from "react-chartjs-2";
 
 ChartJS.register(Tooltip, Legend, CategoryScale, LinearScale, BarElement);
 
-export default function TasksChartLegacy({ labels, data }: any) {
+export default function TasksChart({ labels, data }: any) {
   const chartData = {
     labels,
     datasets: [

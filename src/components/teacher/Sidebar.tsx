@@ -1,11 +1,15 @@
 "use client";
+
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { BookOpen, Inbox, MessageSquare, FileText, Settings as IconSettings } from "lucide-react";
+import { useState } from "react";
+import { Menu, X, Settings, Inbox, BookOpen, MessageSquare, FileText, Home } from "lucide-react";
 
-export default function Sidebar({ username, collapsed = false, mobileOpen = false, onClose }: any) {
+export default function Sidebar({ username }: { username?: string }) {
+  const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const nav = [
+    { href: "/dashboard", label: "Dashboard", icon: Home },
     { href: "/tasks", label: "Tasks", icon: BookOpen },
     { href: "/notices", label: "Notices", icon: Inbox },
     { href: "/messaging", label: "Messaging", icon: MessageSquare },
@@ -17,42 +21,51 @@ export default function Sidebar({ username, collapsed = false, mobileOpen = fals
 
   return (
     <>
-      {/* Desktop sidebar */}
-      <aside className={`hidden sm:flex sm:flex-col ${collapsed ? "w-20" : "w-56"} sm:pt-4 sm:gap-4 sidebar-bg`}>
-        <nav className="flex-1 px-3 space-y-2">
-          {nav.map((item) => {
-            const active = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-3 px-3 py-2 rounded-md ${active ? "bg-muted-10" : "hover:bg-muted-05"}`}>
-                <item.icon size={18} />
-                {!collapsed && <span className="text-sm">{item.label}</span>}
-              </Link>
-            );
-          })}
+      {/* Mobile top bar */}
+      <div className="sm:hidden flex items-center justify-between p-3">
+        <button type="button" onClick={() => setOpen(true)} aria-label="Open menu" className="p-2 rounded-md bg-muted-10">
+          <Menu size={18} />
+        </button>
+        <div className="font-semibold">Menu</div>
+      </div>
+
+      {/* Sidebar for desktop */}
+      <aside className="hidden sm:flex sm:flex-col sm:w-64 sm:pt-4 sm:gap-4">
+        <nav className="flex-1 px-4 space-y-2">
+          {nav.map((item) => (
+            <Link key={item.href} href={item.href} className={`flex items-center gap-3 px-3 py-2 rounded-md ${pathname === item.href ? "bg-indigo-300" : "hover:bg-muted-20"}`}>
+              <item.icon size={18} />
+              <span className="text-sm">{item.label}</span>
+            </Link>
+          ))}
         </nav>
 
-        <div className="px-3 py-3">
-          <Link href={settingsUrl} className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-muted-05">
-            <IconSettings size={18} />
-            {!collapsed && <span className="text-sm">Settings</span>}
+        <div className="px-4 py-3">
+          <Link href={settingsUrl} className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-muted-20">
+            <Settings size={18} />
+            <span className="text-sm">Settings</span>
           </Link>
         </div>
       </aside>
 
-      {/* Mobile drawer controlled by parent */}
-      {mobileOpen && (
-        <div className="fixed inset-0 z-50 sm:hidden">
-          <div className="absolute left-0 top-0 bottom-0 w-72 card-bg p-4">
+      {/* Mobile drawer */}
+      {open && (
+        // overlay should close the drawer when clicked outside the panel
+        <div className="fixed inset-0 z-50 bg-black sm:hidden" >
+          {/* stop clicks inside the panel from bubbling to the overlay */}
+          <div className="absolute left-0 top-0 bottom-0 w-72
+          bg-[var(--bg-card)] p-4">
             <div className="flex items-center justify-between mb-4">
               <div className="font-semibold">Menu</div>
-              <button onClick={() => onClose?.()} className="p-2 rounded-md hover:bg-muted-10">✕</button>
+              <button type="button" onClick={() => setOpen(false)} aria-label="Close menu" className="p-2 rounded-md bg-muted-10"><X size={18} /></button>
             </div>
             <nav className="space-y-2">
               {nav.map((item) => (
-                <Link key={item.href} href={item.href} onClick={() => onClose?.()} className="flex items-center gap-3 px-3 py-2 rounded-md hover:bg-muted-05">
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  // removed overlay-closing via link click; overlay only closes when user clicks outside
+                  className={`flex items-center gap-3 px-3 py-2 rounded-md ${pathname === item.href ? "bg-indigo-300" : "hover:bg-muted-20"}`}>
                   <item.icon size={18} />
                   <span className="text-sm">{item.label}</span>
                 </Link>
@@ -60,13 +73,12 @@ export default function Sidebar({ username, collapsed = false, mobileOpen = fals
             </nav>
 
             <div className="mt-6">
-              <Link href={settingsUrl} className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-muted-05">
-                <IconSettings size={18} />
+              <Link href={settingsUrl} className={`flex items-center gap-2 px-3 py-2 rounded-md ${pathname === settingsUrl ? "bg-indigo-300" : "hover:bg-muted-20"}`}>
+                <Settings size={18} />
                 <span className="text-sm">Settings</span>
               </Link>
             </div>
           </div>
-          <div className="fixed inset-0 bg-overlay-dark" onClick={() => onClose?.()} />
         </div>
       )}
     </>

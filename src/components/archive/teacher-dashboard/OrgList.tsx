@@ -1,6 +1,9 @@
+// src/components/teacher-dashboard/OrgList.tsx
 import React from "react";
 
-export default function OrgListLegacy({ orgsOwned, orgsMember }: any) {
+// OrgList shows owned orgs first and other member orgs below
+export default function OrgList({ orgsOwned, orgsMember }: any) {
+  // Filter out owned orgs from member list to avoid duplication
   const ownedIds = new Set((orgsOwned || []).map((o: any) => o.id));
   const memberOnly = (orgsMember || []).filter((o: any) => !ownedIds.has(o.id));
 
@@ -12,10 +15,10 @@ export default function OrgListLegacy({ orgsOwned, orgsMember }: any) {
           <div className="space-y-2">
             {orgsOwned.map((o: any) => (
               <div key={o.id} className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-sm">{o.name?.[0]}</div>
+                <div className="w-9 h-9 rounded-full bg-muted-20 flex items-center justify-center text-sm">{o.name?.[0]}</div>
                 <div>
                   <div className="font-medium">{o.name}</div>
-                  <div className="text-xs text-[var(--text-muted)]">{o.type}</div>
+                  <div className="text-xs text-muted">{o.type}</div>
                 </div>
               </div>
             ))}
@@ -29,15 +32,15 @@ export default function OrgListLegacy({ orgsOwned, orgsMember }: any) {
           {memberOnly && memberOnly.length > 0 ? (
             memberOnly.map((o: any) => (
               <div key={o.id} className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-white/5 flex items-center justify-center text-sm">{o.name?.[0]}</div>
+                <div className="w-9 h-9 rounded-full bg-muted-20 flex items-center justify-center text-sm">{o.name?.[0]}</div>
                 <div>
                   <div className="font-medium">{o.name}</div>
-                  <div className="text-xs text-[var(--text-muted)]">{o.role}</div>
+                  <div className="text-xs text-muted">{o.role}</div>
                 </div>
               </div>
             ))
           ) : (
-            <p className="text-sm text-[var(--text-muted)]">No organizations found</p>
+            <p className="text-sm text-muted">No organizations found</p>
           )}
         </div>
       </div>
