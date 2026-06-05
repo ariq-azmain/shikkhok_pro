@@ -6,7 +6,7 @@ import "./globals.css";
 import "./global.css";
 import { Analytics } from "@vercel/analytics/next";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
-import PWAInstall from "@/components/PWAIInstall";
+import PWAInstall from "@/components/PWAInstall";
 
 const inter = Inter({
   subsets: ["latin"],
