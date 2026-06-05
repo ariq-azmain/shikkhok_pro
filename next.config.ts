@@ -30,6 +30,7 @@ const nextConfig: NextConfig = withPWA({
     ],
   },
   reactStrictMode: true,
+  turbopack: {},
 });
 
 export default nextConfig;
