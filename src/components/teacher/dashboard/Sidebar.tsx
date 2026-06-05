@@ -51,7 +51,7 @@ export default function Sidebar({ username }: { username?: string }) {
       {/* Mobile drawer */}
       {open && (
         // overlay should close the drawer when clicked outside the panel
-        <div className="fixed inset-0 z-50 bg-black sm:hidden" onClick={() => setOpen(false)}>
+        <div className="fixed inset-0 z-50 bg-black sm:hidden" >
           {/* stop clicks inside the panel from bubbling to the overlay */}
           <div className="absolute left-0 top-0 bottom-0 w-72 bg-[var(--bg-card)] p-4" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between mb-4">
