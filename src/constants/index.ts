@@ -255,7 +255,7 @@ export const ACCOUNT_TYPES = [
 ];
 
 
-const FOOTER_LINKS = {
+export const FOOTER_LINKS = {
   Product: [
     { label: "Features", href: "#features" },
     { label: "How It Works", href: "#how-it-works" },
