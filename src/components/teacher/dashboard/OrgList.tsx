@@ -17,7 +17,7 @@ export default function OrgList({ orgsOwned = [], orgsMember = [], onSelectOrg }
           <p className="text-xs font-semibold mb-3 text-secondary">Owned</p>
           <div className="space-y-2">
             {orgsOwned.map((o) => (
-              <button key={o.id} onClick={() => onSelectOrg?.(o.id)} className="w-full flex items-center gap-3 p-3 rounded-lg bg-muted-10 hover:bg-muted-20 transition">
+              <button key={o.id} type="button" onClick={() => onSelectOrg?.(o.id)} className="w-full flex items-center gap-3 p-3 rounded-lg bg-muted-10 hover:bg-muted-20 transition">
                 {o.logo ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={o.logo} alt={o.name} className="w-9 h-9 rounded-full object-cover" />
@@ -39,7 +39,7 @@ export default function OrgList({ orgsOwned = [], orgsMember = [], onSelectOrg }
         <div className="space-y-2">
           {memberOnly && memberOnly.length > 0 ? (
             memberOnly.map((o) => (
-              <button key={o.id} onClick={() => onSelectOrg?.(o.id)} className="w-full flex items-center gap-3 p-3 rounded-lg bg-muted-10 hover:bg-muted-20 transition">
+              <button key={o.id} type="button" onClick={() => onSelectOrg?.(o.id)} className="w-full flex items-center gap-3 p-3 rounded-lg bg-muted-10 hover:bg-muted-20 transition">
                 {o.logo ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={o.logo} alt={o.name} className="w-9 h-9 rounded-full object-cover" />

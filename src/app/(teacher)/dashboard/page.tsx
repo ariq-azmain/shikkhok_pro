@@ -62,7 +62,7 @@ export default async function Page() {
       .order("createdAt", { ascending: false })
       .limit(4),
     supabase.from("tasks").select("id", { count: "exact", head: true }).eq("assignedToId", userId),
-    supabase.from("notices").select("id", { count: "exact", head: true }).in("orgId", (await supabase.from("org_members").select("orgId").eq("userId", userId)).data?.map((r: any) => r.orgId) ?? []),
+    supabase.from("notices").select("id", { count: "exact", head: true }).in("orgId", (await supabase.from("org_members").select("orgId").eq("userId", userId)).data?.map((r: any) => r.orgId) ?? [])
   ]);
 
   const tasksPreview = tasksPreviewRes.data ?? [];
