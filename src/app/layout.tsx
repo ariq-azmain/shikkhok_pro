@@ -6,10 +6,11 @@ import "./globals.css";
 import "./global.css";
 import { Analytics } from "@vercel/analytics/next";
 import ServiceWorkerRegister from "@/components/ServiceWorkerRegister";
+import PWAInstall from "@/components/PWAIInstall";
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-inter", 
   display: "swap",
 });
 
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             cssLayerName: "clerk",
           }}
         >
+        <PWAInstall/>
           {children}
           <Analytics />
           <ServiceWorkerRegister />
