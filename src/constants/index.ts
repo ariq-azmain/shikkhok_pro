@@ -253,3 +253,31 @@ export const ACCOUNT_TYPES = [
     glow: "rgba(168,85,247,0.25)",
   },
 ];
+
+
+const FOOTER_LINKS = {
+  Product: [
+    { label: "Features", href: "#features" },
+    { label: "How It Works", href: "#how-it-works" },
+    { label: "Curriculum", href: "#curriculum" },
+    { label: "Security", href: "#security" },
+    { label: "Pricing", href: "/pricing" },
+  ],
+  Platform: [
+    { label: "Dashboard", href: "/dashboard" },
+    { label: "Question Explorer", href: "/explore" },
+    { label: "Organizations", href: "/org/create" },
+    { label: "API", href: "/api-docs" },
+  ],
+  Support: [
+    { label: "Documentation", href: "/docs" },
+    { label: "Help Center", href: "/help" },
+    { label: "Contact Us", href: "/contact" },
+    { label: "Status", href: "/status" },
+  ],
+  Legal: [
+    { label: "Privacy Policy", href: "/privacy" },
+    { label: "Terms of Service", href: "/terms" },
+    { label: "Cookie Policy", href: "/cookies" },
+  ],
+};
