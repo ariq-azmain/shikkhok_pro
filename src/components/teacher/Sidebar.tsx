@@ -38,7 +38,7 @@ export default function Sidebar({ username }: { username?: string }) {
                     type="button"
                     onClick={() => setOpen(true)}
                     aria-label="Open menu"
-                    className="p-2 rounded-md bg-muted-10"
+                    className="p-2 rounded-md bg-muted-10 ml-2"
                 >
                     <Menu size={18} />
                 </button>
