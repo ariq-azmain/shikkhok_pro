@@ -17,7 +17,12 @@ function timeAgo(dateStr: string) {
 }
 
 function getInitials(name: string) {
-  return name.split(" ").map((w) => w[0]).join("").slice(0, 2).toUpperCase();
+  return name
+    .split(" ")
+    .map((w) => w[0])
+    .join("")
+    .slice(0, 2)
+    .toUpperCase();
 }
 
 // ——— Single comment item ———
@@ -30,15 +35,23 @@ interface CommentItemProps {
   depth?: number;
 }
 
-function CommentItem({ comment, currentUserId, onDelete, onReply, depth = 0 }: CommentItemProps) {
+function CommentItem({
+  comment,
+  currentUserId,
+  onDelete,
+  onReply,
+  depth = 0,
+}: CommentItemProps) {
   return (
     <div className={`flex gap-2.5 ${depth > 0 ? "pl-8" : ""}`}>
       {/* Avatar */}
-      <div
-        className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold text-white overflow-hidden bg-indigo-500/20 border border-indigo-500/20"
-      >
+      <div className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-xs font-bold text-white overflow-hidden bg-indigo-500/20 border border-indigo-500/20">
         {comment.user.avatar ? (
-          <img src={comment.user.avatar} alt="" className="w-full h-full object-cover" />
+          <img
+            src={comment.user.avatar}
+            alt=""
+            className="w-full h-full object-cover"
+          />
         ) : (
           getInitials(comment.user.displayName)
         )}
@@ -46,16 +59,25 @@ function CommentItem({ comment, currentUserId, onDelete, onReply, depth = 0 }: C
 
       <div className="flex-1 min-w-0">
         {/* Bubble */}
-        <div className="rounded-xl px-3 py-2" style={{ background: "var(--bg-secondary)" }}>
+        <div
+          className="rounded-xl px-3 py-2"
+          style={{ background: "var(--bg-secondary)" }}
+        >
           <div className="flex items-center gap-2 mb-1">
-            <span className="text-xs font-semibold" style={{ color: "var(--text-primary)" }}>
+            <span
+              className="text-xs font-semibold"
+              style={{ color: "var(--text-primary)" }}
+            >
               {comment.user.displayName}
             </span>
             <span className="text-xs" style={{ color: "var(--text-muted)" }}>
               @{comment.user.username}
             </span>
           </div>
-          <p className="text-sm leading-relaxed" style={{ color: "var(--text-primary)" }}>
+          <p
+            className="text-sm leading-relaxed"
+            style={{ color: "var(--text-primary)" }}
+          >
             {comment.content}
           </p>
         </div>
@@ -75,7 +97,9 @@ function CommentItem({ comment, currentUserId, onDelete, onReply, depth = 0 }: C
           )}
           {currentUserId === comment.user.id && (
             <button
-              onClick={() => onDelete(comment.id, comment.parentId ?? undefined)}
+              onClick={() =>
+                onDelete(comment.id, comment.parentId ?? undefined)
+              }
               className="text-xs text-red-400/60 hover:text-red-400 transition-colors"
             >
               <Trash2 size={11} />
@@ -108,7 +132,7 @@ function RepliesSection({
     setLoading(true);
     try {
       const res = await fetch(
-        `/api/questions/${questionId}/comments?parentId=${parentComment.id}`
+        `/api/questions/${questionId}/comments?parentId=${parentComment.id}`,
       );
       const data = await res.json();
       if (res.ok) setReplies(data.data);
@@ -125,7 +149,11 @@ function RepliesSection({
           onClick={loadReplies}
           className="text-xs text-indigo-400 hover:text-indigo-300 font-medium flex items-center gap-1"
         >
-          {loading ? <Loader2 size={11} className="animate-spin" /> : <CornerDownRight size={11} />}
+          {loading ? (
+            <Loader2 size={11} className="animate-spin" />
+          ) : (
+            <CornerDownRight size={11} />
+          )}
           View replies
         </button>
       )}
@@ -153,7 +181,13 @@ interface InputProps {
   onCancel?: () => void;
 }
 
-function CommentInput({ onSubmit, posting, placeholder = "Write a comment...", autoFocus, onCancel }: InputProps) {
+function CommentInput({
+  onSubmit,
+  posting,
+  placeholder = "Write a comment...",
+  autoFocus,
+  onCancel,
+}: InputProps) {
   const [value, setValue] = useState("");
 
   async function handleSubmit() {
@@ -217,7 +251,8 @@ interface Props {
 
 export default function CommentSection({ questionId }: Props) {
   const { user: clerkUser, isSignedIn } = useUser();
-  const { comments, loading, posting, error, postComment, deleteComment } = useComments(questionId);
+  const { comments, loading, posting, error, postComment, deleteComment } =
+    useComments(questionId);
   const [replyingTo, setReplyingTo] = useState<Comment | null>(null);
 
   // DB user id — comment owner check এর জন্য username দিয়ে করো
@@ -235,7 +270,10 @@ export default function CommentSection({ questionId }: Props) {
 
   return (
     <div>
-      <h3 className="text-sm font-bold mb-4" style={{ color: "var(--text-secondary)" }}>
+      <h3
+        className="text-sm font-bold mb-4"
+        style={{ color: "var(--text-secondary)" }}
+      >
         Comments {comments.length > 0 && `(${comments.length})`}
       </h3>
 
@@ -246,8 +284,17 @@ export default function CommentSection({ questionId }: Props) {
           {error && <p className="text-xs text-red-400 mt-1">{error}</p>}
         </div>
       ) : (
-        <p className="text-sm mb-5 text-center py-3 rounded-xl" style={{ color: "var(--text-muted)", background: "var(--bg-secondary)" }}>
-          <a href="/sign-in" className="text-indigo-400 hover:underline">Sign in</a> to comment
+        <p
+          className="text-sm mb-5 text-center py-3 rounded-xl"
+          style={{
+            color: "var(--text-muted)",
+            background: "var(--bg-secondary)",
+          }}
+        >
+          <a href="/sign-in" className="text-indigo-400 hover:underline">
+            Sign in
+          </a>{" "}
+          to comment
         </p>
       )}
 
@@ -257,7 +304,10 @@ export default function CommentSection({ questionId }: Props) {
           <Loader2 size={20} className="animate-spin text-indigo-400" />
         </div>
       ) : comments.length === 0 ? (
-        <p className="text-center text-sm py-6" style={{ color: "var(--text-muted)" }}>
+        <p
+          className="text-center text-sm py-6"
+          style={{ color: "var(--text-muted)" }}
+        >
           No comments yet. Be the first!
         </p>
       ) : (

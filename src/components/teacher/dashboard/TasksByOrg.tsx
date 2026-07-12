@@ -6,7 +6,10 @@ interface TasksByOrgProps {
   onTaskClick?: (taskId: string) => void;
 }
 
-export default function TasksByOrg({ taskGroups = [], onTaskClick }: TasksByOrgProps) {
+export default function TasksByOrg({
+  taskGroups = [],
+  onTaskClick,
+}: TasksByOrgProps) {
   if (!taskGroups || taskGroups.length === 0) {
     return <div className="text-sm text-muted">No assigned tasks.</div>;
   }
@@ -14,11 +17,16 @@ export default function TasksByOrg({ taskGroups = [], onTaskClick }: TasksByOrgP
   return (
     <div className="space-y-4">
       {taskGroups.map((group) => (
-        <div key={group.orgId} className="rounded-lg border border-white/10 p-4 bg-[var(--bg-card)]">
+        <div
+          key={group.orgId}
+          className="rounded-lg border border-white/10 p-4 bg-[var(--bg-card)]"
+        >
           <div className="flex items-center justify-between mb-3">
             <div>
               <h3 className="font-semibold text-sm">{group.orgName}</h3>
-              <p className="text-xs text-muted mt-1">{group.tasks.length} tasks</p>
+              <p className="text-xs text-muted mt-1">
+                {group.tasks.length} tasks
+              </p>
             </div>
           </div>
 
@@ -30,7 +38,12 @@ export default function TasksByOrg({ taskGroups = [], onTaskClick }: TasksByOrgP
 
           <div className="flex flex-wrap gap-2">
             {Object.entries(group.statusCounts).map(([status, count]) => (
-              <span key={status} className="text-xs px-2 py-1 rounded-full bg-muted-10 text-[var(--text-secondary)]">{status}: {count}</span>
+              <span
+                key={status}
+                className="text-xs px-2 py-1 rounded-full bg-muted-10 text-[var(--text-secondary)]"
+              >
+                {status}: {count}
+              </span>
             ))}
           </div>
         </div>

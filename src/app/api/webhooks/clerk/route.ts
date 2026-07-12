@@ -13,13 +13,16 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 export async function POST(req: Request) {
   const WEBHOOK_SECRET = process.env.CLERK_WEBHOOK_SECRET;
   if (!WEBHOOK_SECRET) {
-    return NextResponse.json({ error: "Missing webhook secret" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Missing webhook secret" },
+      { status: 500 },
+    );
   }
 
   const headerPayload = await headers();
@@ -28,7 +31,10 @@ export async function POST(req: Request) {
   const svix_signature = headerPayload.get("svix-signature");
 
   if (!svix_id || !svix_timestamp || !svix_signature) {
-    return NextResponse.json({ error: "Missing svix headers" }, { status: 400 });
+    return NextResponse.json(
+      { error: "Missing svix headers" },
+      { status: 400 },
+    );
   }
 
   const payload = await req.json();
@@ -50,7 +56,7 @@ export async function POST(req: Request) {
   const { type, data } = event;
 
   const primaryEmail = data.email_addresses?.find(
-    (e: any) => e.id === data.primary_email_address_id
+    (e: any) => e.id === data.primary_email_address_id,
   )?.email_address;
 
   if (!primaryEmail && type !== "user.deleted") {
@@ -66,7 +72,10 @@ export async function POST(req: Request) {
   // Supabase unique constraint এর জন্য clerkId suffix দিয়ে collision avoid করা হয়
   const baseUsername =
     data.username ??
-    primaryEmail?.split("@")[0].toLowerCase().replace(/[^a-z0-9_]/g, "_");
+    primaryEmail
+      ?.split("@")[0]
+      .toLowerCase()
+      .replace(/[^a-z0-9_]/g, "_");
 
   try {
     if (type === "user.created") {
@@ -115,8 +124,8 @@ export async function POST(req: Request) {
         displayName,
         avatar: data.image_url ?? null,
         username: finalUsername,
-        accountType: "STUDENT",         // default, onboarding এ বদলাবে
-        onboardingComplete: false,       // ← onboarding gate এর জন্য
+        accountType: "STUDENT", // default, onboarding এ বদলাবে
+        onboardingComplete: false, // ← onboarding gate এর জন্য
       });
 
       if (insertErr) throw insertErr;
@@ -155,7 +164,7 @@ export async function POST(req: Request) {
     console.error("[Webhook Error]", error);
     return NextResponse.json(
       { error: "DB operation failed", detail: error.message },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

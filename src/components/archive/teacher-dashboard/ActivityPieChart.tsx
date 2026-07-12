@@ -9,7 +9,12 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 export default function ActivityPieChart({ data }: any) {
   // data expected: { questionsCreated, commentsMade, likesMade, noticesPosted }
   const labels = ["Questions", "Comments", "Likes", "Notices"];
-  const values = [data.questionsCreated ?? 0, data.commentsMade ?? 0, data.likesMade ?? 0, data.noticesPosted ?? 0];
+  const values = [
+    data.questionsCreated ?? 0,
+    data.commentsMade ?? 0,
+    data.likesMade ?? 0,
+    data.noticesPosted ?? 0,
+  ];
 
   const chartData = {
     labels,

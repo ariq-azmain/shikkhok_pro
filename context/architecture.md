@@ -1,23 +1,25 @@
 # 📚 Shikkhok Pro — সম্পূর্ণ প্রজেক্ট আর্কিটেকচার প্ল্যান
+
 > বাংলাদেশের শিক্ষক ও ছাত্রদের জন্য AI-চালিত প্রশ্নপত্র সোশ্যাল প্ল্যাটফর্ম
 
 ---
 
 ## 1. 🧭 প্রজেক্ট ওভারভিউ
 
-| বিষয় | বিবরণ |
-|---|---|
-| প্রজেক্ট নাম | Shikkhok Pro (শিক্ষক প্রো) |
-| টার্গেট | বাংলাদেশের স্কুল, কলেজ, শিক্ষক, ছাত্র ও অভিভাবক |
-| কারিকুলাম | NCTB — Class 1–10, SSC, HSC |
-| ভাষা | English (UI), Bangla (Content) |
-| মূল ফিচার | AI দিয়ে প্রশ্নপত্র তৈরি + সোশ্যাল মিডিয়া ফিড + Organization ম্যানেজমেন্ট |
+| বিষয়        | বিবরণ                                                                      |
+| ------------ | -------------------------------------------------------------------------- |
+| প্রজেক্ট নাম | Shikkhok Pro (শিক্ষক প্রো)                                                 |
+| টার্গেট      | বাংলাদেশের স্কুল, কলেজ, শিক্ষক, ছাত্র ও অভিভাবক                            |
+| কারিকুলাম    | NCTB — Class 1–10, SSC, HSC                                                |
+| ভাষা         | English (UI), Bangla (Content)                                             |
+| মূল ফিচার    | AI দিয়ে প্রশ্নপত্র তৈরি + সোশ্যাল মিডিয়া ফিড + Organization ম্যানেজমেন্ট |
 
 ---
 
 ## 2. 🛠️ টেক স্ট্যাক (Recommended)
 
 ### Frontend
+
 ```text
 Framework     : Next.js 14+ (App Router)
 Styling       : Tailwind CSS
@@ -26,10 +28,10 @@ Forms         : React Hook Form + Zod
 Rich Text     : TipTap Editor (Question Editor এর জন্য)
 Realtime Chat : StreamChat (pre-built messaging solution)
 PDF Export    : react-pdf / puppeteer
-Shape Drawing : Fabric.js / Konva (custom shapes in editor)
 ```
 
 ### Backend
+
 ```text
 Runtime       : Next.js API Routes
 Database      : PostgreSQL (Supabase)
@@ -41,13 +43,15 @@ Notifications : Web Push / FCM (task notification)
 ```
 
 ### Auth
+
 ```text
 Provider      : Clerk
-Login Methods : Google / Gmail, GitHub, Facebook (Social Login)
+Login Methods : Google, GitHub, Facebook, email (Social Login)
 Account Types : TEACHER | STUDENT | PARENT (signup এ select করবে)
 ```
 
 ### AI
+
 ```text
 Primary       : Groq
 Fallback      : Gemini
@@ -57,12 +61,14 @@ Upload Support: PDF, DOCX/DOC, PNG/JPG/JPEG এবং অন্যান্য r
 ```
 
 ### Messaging
+
 ```text
 Provider      : StreamChat (pre-built solution — scratch থেকে নয়)
 Features      : 1-on-1 DM, Group Chat (org-level), file/image/question share
 ```
 
 ### DevOps
+
 ```text
 Hosting       : Vercel (Frontend + API)
 DB Hosting    : PostgreSQL / Supabase
@@ -89,17 +95,17 @@ ORG_TEACHER      → Organization এর সদস্য শিক্ষক
 
 ### রোল পারমিশন ম্যাট্রিক্স
 
-| পারমিশন | SUPER | ORG_PRINCIPAL | ORG_ADMIN | TEACHER | STUDENT |
-|---|:---:|:---:|:---:|:---:|:---:|
-| প্রশ্ন জেনারেট করা | ✅ | ✅ | ✅ | ✅ | ❌ |
-| Question Bank বানানো | ✅ | ✅ | ✅* | ❌ | ❌ |
-| Teacher যোগ/বাদ দেওয়া | ✅ | ✅ | ✅ | ❌ | ❌ |
-| Task অ্যাসাইন করা | ✅ | ✅ | ✅ | ❌ | ❌ |
-| Notice পোস্ট করা | ✅ | ✅ | ✅ | ❌ | ❌ |
-| Public প্রশ্ন দেখা | ✅ | ✅ | ✅ | ✅ | ✅ |
-| School প্রশ্ন দেখা | ✅ | ✅ | ✅ | ✅ | ❌ |
-| Private প্রশ্ন দেখা | ✅ | ✅ | ✅ | শুধু নিজেরটা | ❌ |
-| Like/Comment/Share | ✅ | ✅ | ✅ | ✅ | ✅ |
+| পারমিশন                | SUPER | ORG_PRINCIPAL | ORG_ADMIN |   TEACHER    | STUDENT |
+| ---------------------- | :---: | :-----------: | :-------: | :----------: | :-----: |
+| প্রশ্ন জেনারেট করা     |  ✅   |      ✅       |    ✅     |      ✅      |   ❌    |
+| Question Bank বানানো   |  ✅   |      ✅       |   ✅\*    |      ❌      |   ❌    |
+| Teacher যোগ/বাদ দেওয়া |  ✅   |      ✅       |    ✅     |      ❌      |   ❌    |
+| Task অ্যাসাইন করা      |  ✅   |      ✅       |    ✅     |      ❌      |   ❌    |
+| Notice পোস্ট করা       |  ✅   |      ✅       |    ✅     |      ❌      |   ❌    |
+| Public প্রশ্ন দেখা     |  ✅   |      ✅       |    ✅     |      ✅      |   ✅    |
+| School প্রশ্ন দেখা     |  ✅   |      ✅       |    ✅     |      ✅      |   ❌    |
+| Private প্রশ্ন দেখা    |  ✅   |      ✅       |    ✅     | শুধু নিজেরটা |   ❌    |
+| Like/Comment/Share     |  ✅   |      ✅       |    ✅     |      ✅      |   ✅    |
 
 \*ORG_PRINCIPAL অনুমতি দিলে
 
@@ -111,207 +117,7 @@ ORG_TEACHER      → Organization এর সদস্য শিক্ষক
 
 ### Core Models
 
-```text
-// ইউজার
-model User {
-  id            String     @id @default(cuid())
-  clerkId       String     @unique
-  username      String     @unique
-  displayName   String
-  email         String     @unique
-  avatar        String?
-  bio           String?
-  accountType   AccountType  @default(STUDENT) // TEACHER | STUDENT | PARENT
-  createdAt     DateTime   @default(now())
-
-  // Relations
-  orgMemberships  OrgMember[]
-  questions       Question[]
-  likes           Like[]
-  comments        Comment[]
-  tasks           Task[]
-  notifications   Notification[]
-}
-
-// অর্গানাইজেশন (স্কুল/কলেজ/কোচিং)
-model Organization {
-  id          String   @id @default(cuid())
-  name        String
-  slug        String   @unique
-  logo        String?
-  description String?
-  address     String?
-  type        OrgType  // SCHOOL | COLLEGE | COACHING | MADRASA | OTHER
-  createdAt   DateTime @default(now())
-
-  // Relations
-  members       OrgMember[]
-  questionBanks QuestionBank[]
-  notices       Notice[]
-  tasks         Task[]
-}
-
-// অর্গানাইজেশন মেম্বার
-model OrgMember {
-  id        String    @id @default(cuid())
-  userId    String
-  orgId     String
-  role      OrgRole   // ORG_PRINCIPAL | ORG_ADMIN | ORG_TEACHER
-  subjects  String[]  // এই teacher কোন কোন বিষয়ের, কোন কোন class এর
-  classes   String[]
-  joinedAt  DateTime  @default(now())
-
-  user  User         @relation(fields: [userId], references: [id])
-  org   Organization @relation(fields: [orgId], references: [id])
-
-  @@unique([userId, orgId])
-}
-
-// প্রশ্ন ব্যাংক (শুধুমাত্র Organization এর ভেতরে)
-model QuestionBank {
-  id          String   @id @default(cuid())
-  orgId       String
-  name        String
-  description String?
-  subject     String
-  className   String
-  createdBy   String
-  createdAt   DateTime @default(now())
-
-  org       Organization @relation(fields: [orgId], references: [id])
-  questions Question[]
-}
-
-// প্রশ্নপত্র
-model Question {
-  id              String         @id @default(cuid())
-  bankId          String?        // null হলে individual question
-  createdBy       String
-  orgId           String?
-
-  // প্রশ্নের বিবরণ
-  title           String
-  content         Json           // MD format এ প্রশ্নের structured data
-  subject         String
-  className       String
-  chapter         String?
-  topic           String?
-  difficulty      Difficulty     // EASY | NORMAL | HARD
-  totalMarks      Int?
-  timeMinutes     Int?
-
-  // ভিজিবিলিটি
-  visibility      Visibility     // PUBLIC | SCHOOL | PRIVATE
-
-  // AI মেটাডাটা
-  aiGenerated     Boolean        @default(false)
-  aiModel         String?
-  customPrompt    String?
-  syllabusFile    String?        // uploaded syllabus URL
-
-  // সোশ্যাল
-  likesCount      Int            @default(0)
-  commentsCount   Int            @default(0)
-  sharesCount     Int            @default(0)
-  viewsCount      Int            @default(0)
-
-  createdAt       DateTime       @default(now())
-  updatedAt       DateTime       @updatedAt
-
-  // Relations
-  bank      QuestionBank? @relation(fields: [bankId], references: [id])
-  creator   User         @relation(fields: [createdBy], references: [id])
-  likes     Like[]
-  comments  Comment[]
-}
-
-// লাইক
-model Like {
-  id         String   @id @default(cuid())
-  userId     String
-  questionId String
-  createdAt  DateTime @default(now())
-
-  user     User     @relation(fields: [userId], references: [id])
-  question Question @relation(fields: [questionId], references: [id])
-
-  @@unique([userId, questionId])
-}
-
-// কমেন্ট
-model Comment {
-  id         String    @id @default(cuid())
-  userId     String
-  questionId String
-  content    String
-  parentId   String?   // nested reply
-  createdAt  DateTime  @default(now())
-
-  user     User      @relation(fields: [userId], references: [id])
-  question Question  @relation(fields: [questionId], references: [id])
-  parent   Comment?  @relation("Replies", fields: [parentId], references: [id])
-  replies  Comment[] @relation("Replies")
-}
-
-// নোটিশ বোর্ড (Org only)
-model Notice {
-  id          String      @id @default(cuid())
-  orgId       String
-  title       String
-  description String
-  type        NoticeType  // EVENTS | URGENT | GENERAL | EXAM | HOLIDAY | OTHER
-  postedBy    String
-  isImportant Boolean     @default(false)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  org Organization @relation(fields: [orgId], references: [id])
-}
-
-// টাস্ক ম্যানেজার (Org only)
-model Task {
-  id              String     @id @default(cuid())
-  orgId           String
-  assignedTo      String     // ORG_TEACHER এর userId
-  assignedBy      String     // ORG_ADMIN বা ORG_PRINCIPAL এর userId
-  title           String
-  description     String?
-  assignDate      DateTime   @default(now())
-  expireDate      DateTime?
-  status          TaskStatus // PENDING | IN_PROGRESS | SUBMITTED | APPROVED | REJECTED
-  submittedQuestionId String?
-  feedback        String     @default("")
-  approveMessage  String     @default("")
-  createdAt       DateTime   @default(now())
-  updatedAt       DateTime   @updatedAt
-
-  org  Organization @relation(fields: [orgId], references: [id])
-  user User         @relation(fields: [assignedTo], references: [id])
-}
-
-// নোটিফিকেশন
-model Notification {
-  id        String   @id @default(cuid())
-  userId    String
-  title     String
-  body      String
-  type      String
-  isRead    Boolean  @default(false)
-  link      String?
-  createdAt DateTime @default(now())
-
-  user User @relation(fields: [userId], references: [id])
-}
-
-// Enums
-enum AccountType  { TEACHER STUDENT PARENT }
-enum OrgRole      { ORG_PRINCIPAL ORG_ADMIN ORG_TEACHER }
-enum OrgType      { SCHOOL COLLEGE COACHING MADRASA OTHER }
-enum Visibility   { PUBLIC SCHOOL PRIVATE }
-enum Difficulty   { EASY NORMAL HARD }
-enum TaskStatus   { PENDING IN_PROGRESS SUBMITTED APPROVED REJECTED }
-enum NoticeType   { EVENTS URGENT GENERAL EXAM HOLIDAY OTHER }
-```
+@./schema.prisma
 
 ---
 
@@ -372,7 +178,7 @@ Shikkhok Pro/
 ├── components/
 │   ├── ui/                            # shadcn base components
 │   ├── question/
-│   │   ├── QuestionCard.tsx           # ফিডে প্রশ্নের কার্ড
+│   │   ├── ../src/components/question/QuestionCard.tsx           # ফিডে প্রশ্নের কার্ড
 │   │   ├── QuestionDetail.tsx         # পুরো প্রশ্ন দেখা
 │   │   ├── QuestionActions.tsx        # Like/Share/Comment বার
 │   │   ├── QuestionPaper.tsx          # Print ভিউ
@@ -453,15 +259,17 @@ Path 1 — AI Generation:
 Path 2 — Question Editor (Manual):
   ┌─────────────────────────────────────────┐
   │  Teacher → Opens Question Editor        │
-  │  → Side panel: Book viewer (copy text) │
-  │  → Rich text editing with toolbar      │
-  │  → AI inline suggestions (on cursor)   │
-  │  → Pre-built layouts / components      │
-  │  → Set Visibility → Save/Export        │
+  │  → Side panel: Book viewer (copy text)  │
+  │  → Side panel: Book viewer (copy text)  │
+  │  → Rich text editing with toolbar       │
+  │  → AI inline suggestions (on cursor)    │
+  │  → Pre-built layouts / components       │
+  │  → Set Visibility → Save/Export         │
   └─────────────────────────────────────────┘
 ```
 
 ### AI ইনপুট প্যারামিটার
+
 ```javascript
 interface QuestionGenerationInput {
   subject: string;          // বাংলা | ইংরেজি | গণিত | বিজ্ঞান...
@@ -477,9 +285,8 @@ interface QuestionGenerationInput {
 }
 ```
 
-
-
 ### Question Editor ফিচার সমূহ
+
 ```text
 Text Formatting:
   ├── Heading (h1–h6)
@@ -498,10 +305,6 @@ Inserts:
       ├── CQ (Creative Question) template
       └── Others
 
-Shapes (Fabric.js/Konva):
-  Triangle, Rectangle, Circle, Cylinder,
-  Arrow, Cross, Tick, Custom cursor/touch shapes
-
 Special:
   ├── AI Inline Suggestions (appears above cursor)
   ├── Book Panel (side view, copyable text)
@@ -509,10 +312,11 @@ Special:
   └── Pre-defined question layouts (editable)
 
 Export Formats:
-  PDF | DOCX/DOC | PNG/JPG | MD
+  PDF | DOCX/DOC | PNG/JPG
 ```
 
 ### AI আউটপুট ফরম্যাট
+
 ```text
 Output: Markdown (MD)
   → Teacher previews MD rendered in platform
@@ -549,22 +353,26 @@ Default (নতুন তৈরি হলে):
 ## 8. 📱 পেজ ও ফিচার ব্রেকডাউন
 
 ### 🏠 পাবলিক ল্যান্ডিং পেজ
+
 - প্ল্যাটফর্মের পরিচয়
 - পাবলিক প্রশ্নের স্যাম্পল
 - Login / Sign Up CTA
 
 ### 📰 ফিড (হোম — TEACHER, STUDENT, PARENT)
+
 - Public প্রশ্নের infinite scroll ফিড
 - Filter: বিষয়, ক্লাস, কঠিনতা
 - Like, Comment, Share
 - Browse questions
 
 ### 🔍 এক্সপ্লোর
+
 - Search প্রশ্ন
 - Tag, বিষয়, ক্লাস দিয়ে Filter
 - Trending প্রশ্নপত্র
 
 ### 🏫 অর্গানাইজেশন (ORG_PRINCIPAL View)
+
 ```text
 ├── Overview        → সংক্ষিপ্ত পরিসংখ্যান
 ├── Teachers        → Teacher যোগ / বাদ / role পরিবর্তন
@@ -577,6 +385,7 @@ Default (নতুন তৈরি হলে):
 ```
 
 ### 👩‍🏫 Teacher Dashboard
+
 ```text
 ├── My Questions    → আমার তৈরি সব প্রশ্ন
 ├── Create with AI  → AI দিয়ে প্রশ্ন তৈরি (wizard)
@@ -587,6 +396,7 @@ Default (নতুন তৈরি হলে):
 ```
 
 ### ✍️ AI প্রশ্ন জেনারেটর (Step-by-step Wizard)
+
 ```text
 Step 1: বিষয় ও ক্লাস নির্বাচন
 Step 2: কঠিনতা (Easy / Normal / Hard) নির্বাচন
@@ -600,10 +410,11 @@ Step 4: Book Source:
 Step 5: AI Generation → MD Preview
 Step 6: Edit in Question Editor (optional)
 Step 7: Visibility set (Public/School/Private)
-Step 8: Export (PDF / DOCX / PNG / MD) বা Save
+Step 8: Export (PDF / DOCX / PNG ) বা Save
 ```
 
 ### 📋 টাস্ক ম্যানেজার
+
 ```text
 PRINCIPAL / ADMIN করে:
   → Task তৈরি (Title, Description, Assigned Teacher, Expire Date)
@@ -624,6 +435,7 @@ Task notification: mobile push / desktop notification।
 ```
 
 ### 📢 নোটিশ বোর্ড
+
 - ADMIN / PRINCIPAL notice তৈরি ও CRUD করবে
 - সব Org member notice দেখতে পারবে
 - Notice fields: createDate (auto), Title, Description, Type (EVENTS/URGENT/GENERAL/EXAM/HOLIDAY/OTHER)
@@ -631,6 +443,7 @@ Task notification: mobile push / desktop notification।
 - Notice এ notification
 
 ### 💬 মেসেজিং (StreamChat)
+
 ```text
 Features:
   ├── 1-on-1 DM (org members এর মধ্যে)
@@ -652,6 +465,7 @@ Privacy:
 ## 9. 🎨 UI/UX গাইডলাইন
 
 ### ডিজাইন থিম
+
 ```text
 Primary Color  : #1E40AF (Deep Blue — শিক্ষার রং)
 Secondary      : #059669 (Green — বাংলাদেশের সবুজ)
@@ -661,6 +475,7 @@ Font           : Plus Jakarta Sans (English) + Kalpurush / Hind Siliguri (Bangla
 ```
 
 ### Bangla Text
+
 ```text
 - Bangla letters অবশ্যই stable থাকতে হবে, কোনো breakage নেই
 - Question Editor এ Bangla font পরিবর্তনের option থাকবে
@@ -668,6 +483,7 @@ Font           : Plus Jakarta Sans (English) + Kalpurush / Hind Siliguri (Bangla
 ```
 
 ### রেসপনসিভ
+
 - Mobile First (বাংলাদেশে mobile ব্যবহার বেশি)
 - PWA সাপোর্ট
 - Question Editor real-time (collaborative ready)
@@ -677,6 +493,7 @@ Font           : Plus Jakarta Sans (English) + Kalpurush / Hind Siliguri (Bangla
 ## 10. 🚀 ডেভেলপমেন্ট ফেজ
 
 ### Phase 1 — Foundation (সপ্তাহ ১-২)
+
 - [ ] Next.js প্রজেক্ট সেটআপ
 - [ ] Clerk Auth ইন্টিগ্রেশন (Google/GitHub/Facebook)
 - [ ] Onboarding: Account type select (TEACHER/STUDENT/PARENT)
@@ -686,6 +503,7 @@ Font           : Plus Jakarta Sans (English) + Kalpurush / Hind Siliguri (Bangla
 - [ ] Teacher add/assign system (subject + class)
 
 ### Phase 2 — Core Question Features (সপ্তাহ ৩-৪)
+
 - [ ] Question Bank CRUD (org only)
 - [ ] AI প্রশ্ন জেনারেটর (step-by-step wizard)
 - [ ] NCTB Curriculum data integration
@@ -696,6 +514,7 @@ Font           : Plus Jakarta Sans (English) + Kalpurush / Hind Siliguri (Bangla
 - [ ] Visibility control (PUBLIC/SCHOOL/PRIVATE)
 
 ### Phase 3 — Social Features (সপ্তাহ ৫-৬)
+
 - [ ] Public Feed (infinite scroll)
 - [ ] Like / Comment / Share
 - [ ] Explore পেজ + Search
@@ -703,6 +522,7 @@ Font           : Plus Jakarta Sans (English) + Kalpurush / Hind Siliguri (Bangla
 - [ ] STUDENT / PARENT browse flow
 
 ### Phase 4 — Organization Tools (সপ্তাহ ৭-৮)
+
 - [ ] Task Management System (CRUD, submit, review, re-assign)
 - [ ] Task Notifications (mobile/desktop push)
 - [ ] Notice Board (CRUD, pin, types)
@@ -711,6 +531,7 @@ Font           : Plus Jakarta Sans (English) + Kalpurush / Hind Siliguri (Bangla
 - [ ] Group message permission control (PRINCIPAL/ADMIN)
 
 ### Phase 5 — Polish & Launch (সপ্তাহ ৯-১০)
+
 - [ ] Bangla font stability audit
 - [ ] Mobile responsive QA
 - [ ] PWA setup
@@ -724,15 +545,15 @@ Font           : Plus Jakarta Sans (English) + Kalpurush / Hind Siliguri (Bangla
 
 ```text
                         ┌─────────────────┐
-                        │   External User  │
-                        │ (STUDENT/PARENT) │
+                        │   External User │
+                        │ (STUDENT/PARENT)│
                         └────────┬────────┘
                                  │ Browse Public Questions
                                  ▼
 ┌──────────┐    Auth      ┌─────────────┐    API Request    ┌───────────────┐
 │  Clerk   │◄────────────►│   Next.js   │◄─────────────────►│  PostgreSQL   │
-│  (Auth)  │              │  Frontend   │                    │  (Prisma ORM) │
-└──────────┘              └──────┬──────┘                    └───────────────┘
+│  (Auth)  │              │  Frontend   │                   │  (Prisma ORM) │
+└──────────┘              └──────┬──────┘                   └───────────────┘
                                  │
                     ┌────────────┼────────────┐
                     ▼            ▼            ▼

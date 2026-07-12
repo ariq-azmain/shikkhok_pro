@@ -9,15 +9,20 @@ import SearchBar from "@/components/explore/SearchBar";
 import { Filters, SkeletonCard } from "@/components/question/FeedHelpers";
 
 export default function ExplorePage() {
-  const [filters, setFilters] = useState<Filters>({ subject: "", className: "", difficulty: "" });
+  const [filters, setFilters] = useState<Filters>({
+    subject: "",
+    className: "",
+    difficulty: "",
+  });
   const [showFilters, setShowFilters] = useState(true);
   const [query, setQuery] = useState("");
 
-  const { questions, loading, loadingMore, error, hasMore, setSentinel } = useQuestionFeed({
-    subject: filters.subject,
-    className: filters.className,
-    difficulty: filters.difficulty,
-  });
+  const { questions, loading, loadingMore, error, hasMore, setSentinel } =
+    useQuestionFeed({
+      subject: filters.subject,
+      className: filters.className,
+      difficulty: filters.difficulty,
+    });
 
   function handleFilterChange(key: keyof Filters, value: string) {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -37,11 +42,18 @@ export default function ExplorePage() {
   }, [questions, query]);
 
   return (
-    <main className="relative min-h-screen" style={{ background: "var(--bg-primary)" }}>
+    <main
+      className="relative min-h-screen"
+      style={{ background: "var(--bg-primary)" }}
+    >
       <div className="relative z-10 max-w-4xl mx-auto px-4 py-8">
         <div className="mb-6 flex items-center justify-between gap-4">
           <div className="flex-1">
-            <SearchBar value={query} onChange={setQuery} placeholder="Search questions, topics or teachers" />
+            <SearchBar
+              value={query}
+              onChange={setQuery}
+              placeholder="Search questions, topics or teachers"
+            />
             <p className="text-sm mt-2" style={{ color: "var(--text-muted)" }}>
               Use filters to narrow results by subject, class and difficulty.
             </p>
@@ -54,7 +66,12 @@ export default function ExplorePage() {
                   ? "border-indigo-500/50 text-indigo-400 bg-indigo-500/10"
                   : "border-white/10 hover:border-white/20"
               }`}
-              style={{ color: showFilters || activeFilterCount > 0 ? undefined : "var(--text-secondary)" }}
+              style={{
+                color:
+                  showFilters || activeFilterCount > 0
+                    ? undefined
+                    : "var(--text-secondary)",
+              }}
             >
               Filters
               {activeFilterCount > 0 && (
@@ -67,7 +84,10 @@ export default function ExplorePage() {
         </div>
 
         {showFilters && (
-          <div className="rounded-2xl p-4 mb-5 border border-white/5" style={{ background: "var(--bg-card)" }}>
+          <div
+            className="rounded-2xl p-4 mb-5 border border-white/5"
+            style={{ background: "var(--bg-card)" }}
+          >
             <FeedFilters filters={filters} onChange={handleFilterChange} />
           </div>
         )}
@@ -92,10 +112,16 @@ export default function ExplorePage() {
             {filtered.length === 0 && !hasMore ? (
               <div className="text-center py-20">
                 <Inbox size={40} className="mx-auto mb-3 text-slate-600" />
-                <p className="font-semibold" style={{ color: "var(--text-secondary)" }}>
+                <p
+                  className="font-semibold"
+                  style={{ color: "var(--text-secondary)" }}
+                >
                   No results
                 </p>
-                <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>
+                <p
+                  className="text-sm mt-1"
+                  style={{ color: "var(--text-muted)" }}
+                >
                   Try different keywords or filters
                 </p>
               </div>
@@ -109,13 +135,21 @@ export default function ExplorePage() {
 
             {/* Sentinel for infinite scroll */}
             {hasMore && (
-              <div ref={setSentinel} className="h-10 flex items-center justify-center mt-4">
-                {loadingMore && <Loader2 size={20} className="animate-spin text-indigo-400" />}
+              <div
+                ref={setSentinel}
+                className="h-10 flex items-center justify-center mt-4"
+              >
+                {loadingMore && (
+                  <Loader2 size={20} className="animate-spin text-indigo-400" />
+                )}
               </div>
             )}
 
             {!hasMore && filtered.length > 0 && (
-              <p className="text-center text-xs mt-8 pb-4" style={{ color: "var(--text-muted)" }}>
+              <p
+                className="text-center text-xs mt-8 pb-4"
+                style={{ color: "var(--text-muted)" }}
+              >
                 You've seen all results
               </p>
             )}

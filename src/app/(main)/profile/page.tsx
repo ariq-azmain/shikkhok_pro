@@ -8,6 +8,7 @@
 
 import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
+
 import { getUserByClerkId } from "@/lib/db";
 
 export default async function ProfileRedirectPage() {

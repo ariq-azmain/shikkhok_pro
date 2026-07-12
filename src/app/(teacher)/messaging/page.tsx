@@ -6,5 +6,10 @@ export const metadata = {
 import PlaceholderPage from "@/components/teacher/dashboard/PlaceholderPage";
 
 export default function MessagingPage() {
-  return <PlaceholderPage title="Messaging" description="Coming soon — messaging center." />;
+  return (
+    <PlaceholderPage
+      title="Messaging"
+      description="Coming soon — messaging center."
+    />
+  );
 }

@@ -73,7 +73,7 @@ export function ProfileAvatar({
             className={cn(
               "absolute inset-0 rounded-full flex items-center justify-center",
               "bg-black/50 opacity-0 hover:opacity-100 transition-opacity duration-200",
-              uploading && "opacity-100 cursor-wait"
+              uploading && "opacity-100 cursor-wait",
             )}
             aria-label="Change avatar"
           >

@@ -15,10 +15,22 @@ type ProfileUser = Pick<
   "username" | "displayName" | "avatar" | "bio" | "accountType" | "createdAt"
 > & { questionCount?: number };
 
-const ACCOUNT_TYPE_LABEL: Record<AccountType, { label: string; color: string }> = {
-  TEACHER: { label: "Teacher", color: "text-indigo-400 bg-indigo-500/10 border-indigo-500/20" },
-  STUDENT: { label: "Student", color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/20" },
-  PARENT: { label: "Parent", color: "text-purple-400 bg-purple-500/10 border-purple-500/20" },
+const ACCOUNT_TYPE_LABEL: Record<
+  AccountType,
+  { label: string; color: string }
+> = {
+  TEACHER: {
+    label: "Teacher",
+    color: "text-indigo-400 bg-indigo-500/10 border-indigo-500/20",
+  },
+  STUDENT: {
+    label: "Student",
+    color: "text-cyan-400 bg-cyan-500/10 border-cyan-500/20",
+  },
+  PARENT: {
+    label: "Parent",
+    color: "text-purple-400 bg-purple-500/10 border-purple-500/20",
+  },
 };
 
 interface ProfileHeaderProps {
@@ -77,7 +89,9 @@ export function ProfileHeader({ user, isOwner = false }: ProfileHeaderProps) {
           </span>
           {user.questionCount !== undefined && (
             <span className="text-gray-400">
-              <span className="text-white font-semibold">{user.questionCount}</span>{" "}
+              <span className="text-white font-semibold">
+                {user.questionCount}
+              </span>{" "}
               public questions
             </span>
           )}

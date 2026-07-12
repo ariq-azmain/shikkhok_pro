@@ -18,11 +18,17 @@ export default function NoticeCard({ notice, onClick }: NoticeCardProps) {
           <div className="font-medium text-sm truncate">{notice.title}</div>
           <div className="text-xs text-muted mt-1">{notice.org.name}</div>
         </div>
-        {notice.isPinned && <Pin className="w-4 h-4 flex-shrink-0 text-amber-500" />}
+        {notice.isPinned && (
+          <Pin className="w-4 h-4 flex-shrink-0 text-amber-500" />
+        )}
       </div>
       <div className="mt-2 flex items-center justify-between">
-        <span className="text-xs px-2 py-1 rounded-full bg-muted-20 text-[var(--text-secondary)]">{notice.type}</span>
-        <span className="text-xs text-muted">{new Date(notice.createdAt).toLocaleDateString()}</span>
+        <span className="text-xs px-2 py-1 rounded-full bg-muted-20 text-[var(--text-secondary)]">
+          {notice.type}
+        </span>
+        <span className="text-xs text-muted">
+          {new Date(notice.createdAt).toLocaleDateString()}
+        </span>
       </div>
     </button>
   );

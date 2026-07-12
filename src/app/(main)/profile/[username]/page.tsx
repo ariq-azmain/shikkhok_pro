@@ -4,6 +4,7 @@
 import { notFound } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import type { Metadata } from "next";
+
 import { getUserPublicProfile, getUserByClerkId } from "@/lib/db";
 import { ProfileClient } from "./ProfileClient";
 
@@ -20,7 +21,8 @@ export async function generateMetadata({
   return {
     title: `${user.displayName} (@${user.username}) — Shikkhok Pro`,
     description:
-      user.bio ?? `View ${user.displayName}'s public questions on Shikkhok Pro.`,
+      user.bio ??
+      `View ${user.displayName}'s public questions on Shikkhok Pro.`,
     openGraph: {
       title: `${user.displayName} (@${user.username})`,
       description: user.bio ?? `${user.displayName} on Shikkhok Pro`,

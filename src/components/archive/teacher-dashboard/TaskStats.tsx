@@ -10,7 +10,11 @@ function StatPill({ label, value }: { label: string; value: number }) {
   );
 }
 
-export default function TaskStats({ stats }: { stats: Record<string, number> }) {
+export default function TaskStats({
+  stats,
+}: {
+  stats: Record<string, number>;
+}) {
   return (
     // allow wrapping on small screens to prevent overflow
     <div className="flex items-center gap-3 flex-wrap">

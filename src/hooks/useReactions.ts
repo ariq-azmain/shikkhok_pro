@@ -116,7 +116,7 @@ export function useComments(questionId: string) {
         setPosting(false);
       }
     },
-    [questionId]
+    [questionId],
   );
 
   const deleteComment = useCallback(
@@ -130,10 +130,18 @@ export function useComments(questionId: string) {
         }
       } catch {}
     },
-    [questionId]
+    [questionId],
   );
 
-  return { comments, loading, posting, error, nextCursor, postComment, deleteComment };
+  return {
+    comments,
+    loading,
+    posting,
+    error,
+    nextCursor,
+    postComment,
+    deleteComment,
+  };
 }
 
 export function useShare(questionId: string, initialCount: number) {

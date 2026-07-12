@@ -45,9 +45,12 @@ export function ProfileQuestions({ username, empty }: ProfileQuestionsProps) {
         const json = await res.json().catch(() => ({}));
         throw new Error(json.error ?? "Failed to load questions");
       }
-      return res.json() as Promise<{ data: Question[]; nextCursor: string | null }>;
+      return res.json() as Promise<{
+        data: Question[];
+        nextCursor: string | null;
+      }>;
     },
-    [username]
+    [username],
   );
 
   // Initial load
@@ -81,7 +84,7 @@ export function ProfileQuestions({ username, empty }: ProfileQuestionsProps) {
             .finally(() => setLoadingMore(false));
         }
       },
-      { threshold: 0.1 }
+      { threshold: 0.1 },
     );
 
     obs.observe(node);
@@ -92,29 +95,26 @@ export function ProfileQuestions({ username, empty }: ProfileQuestionsProps) {
     return (
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {Array.from({ length: 6 }).map((_, i) => (
-          <div
-            key={i}
-            className="h-36 rounded-2xl bg-white/4 animate-pulse"
-          />
+          <div key={i} className="h-36 rounded-2xl bg-white/4 animate-pulse" />
         ))}
       </div>
     );
   }
 
   if (error) {
-    return (
-      <p className="text-red-400 text-sm text-center py-8">{error}</p>
-    );
+    return <p className="text-red-400 text-sm text-center py-8">{error}</p>;
   }
 
   if (questions.length === 0) {
     return (
-      <>{empty ?? (
-        <div className="flex flex-col items-center gap-3 py-16 text-center">
-          <HiDocumentText size={40} className="text-gray-700" />
-          <p className="text-gray-500 text-sm">No public questions yet.</p>
-        </div>
-      )}</>
+      <>
+        {empty ?? (
+          <div className="flex flex-col items-center gap-3 py-16 text-center">
+            <HiDocumentText size={40} className="text-gray-700" />
+            <p className="text-gray-500 text-sm">No public questions yet.</p>
+          </div>
+        )}
+      </>
     );
   }
 
@@ -136,7 +136,7 @@ export function ProfileQuestions({ username, empty }: ProfileQuestionsProps) {
               <span
                 className={cn(
                   "ml-auto text-xs font-medium px-2 py-0.5 rounded-full border",
-                  DIFFICULTY_COLOR[q.difficulty]
+                  DIFFICULTY_COLOR[q.difficulty],
                 )}
               >
                 {q.difficulty.charAt(0) + q.difficulty.slice(1).toLowerCase()}
@@ -165,7 +165,10 @@ export function ProfileQuestions({ username, empty }: ProfileQuestionsProps) {
       </div>
 
       {/* Infinite scroll sentinel */}
-      <div ref={sentinelRef} className="h-8 mt-4 flex items-center justify-center">
+      <div
+        ref={sentinelRef}
+        className="h-8 mt-4 flex items-center justify-center"
+      >
         {loadingMore && (
           <div className="w-5 h-5 border-2 border-indigo-500/30 border-t-indigo-500 rounded-full animate-spin" />
         )}

@@ -6,7 +6,7 @@ import { createClient } from "@supabase/supabase-js";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 const VALID_TYPES = ["TEACHER", "STUDENT", "PARENT"] as const;
@@ -21,7 +21,10 @@ export async function POST(req: Request) {
     // ── Body parse আগেই করো — dbUser check এর আগে ─────────────────
     const text = await req.text();
     if (!text) {
-      return NextResponse.json({ error: "Empty request body" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Empty request body" },
+        { status: 400 },
+      );
     }
 
     let body: { accountType?: string; bio?: string };
@@ -34,7 +37,10 @@ export async function POST(req: Request) {
     const { accountType, bio } = body;
 
     if (!accountType || !VALID_TYPES.includes(accountType as any)) {
-      return NextResponse.json({ error: "Invalid account type" }, { status: 400 });
+      return NextResponse.json(
+        { error: "Invalid account type" },
+        { status: 400 },
+      );
     }
 
     // ── DB তে user আছে কিনা check করো ──────────────────────────────
@@ -55,7 +61,7 @@ export async function POST(req: Request) {
     if (dbUser?.onboardingComplete === true) {
       return NextResponse.json(
         { error: "Onboarding already completed.", alreadyDone: true },
-        { status: 409 }
+        { status: 409 },
       );
     }
 
@@ -73,11 +79,14 @@ export async function POST(req: Request) {
       // পরে process হয়। তাই এখানে সব Clerk data দিয়ে user তৈরি করো।
 
       const primaryEmail = user.emailAddresses.find(
-        (e) => e.id === user.primaryEmailAddressId
+        (e) => e.id === user.primaryEmailAddressId,
       )?.emailAddress;
 
       if (!primaryEmail) {
-        return NextResponse.json({ error: "No primary email found" }, { status: 400 });
+        return NextResponse.json(
+          { error: "No primary email found" },
+          { status: 400 },
+        );
       }
 
       const displayName =
@@ -87,7 +96,10 @@ export async function POST(req: Request) {
 
       const baseUsername =
         user.username ??
-        primaryEmail.split("@")[0].toLowerCase().replace(/[^a-z0-9_]/g, "_");
+        primaryEmail
+          .split("@")[0]
+          .toLowerCase()
+          .replace(/[^a-z0-9_]/g, "_");
 
       // Username uniqueness check
       const { count: usernameCount } = await supabase
@@ -133,6 +145,9 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message ?? "Unknown error" }, { status: 500 });
+    return NextResponse.json(
+      { error: err.message ?? "Unknown error" },
+      { status: 500 },
+    );
   }
 }

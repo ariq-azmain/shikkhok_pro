@@ -30,31 +30,31 @@ export default function HeroSection() {
       tl.fromTo(
         badgeRef.current,
         { opacity: 0, y: 20, scale: 0.9 },
-        { opacity: 1, y: 0, scale: 1, duration: 0.6 }
+        { opacity: 1, y: 0, scale: 1, duration: 0.6 },
       )
         .fromTo(
           headingRef.current,
           { opacity: 0, y: 40 },
           { opacity: 1, y: 0, duration: 0.8 },
-          "-=0.3"
+          "-=0.3",
         )
         .fromTo(
           subRef.current,
           { opacity: 0, y: 30 },
           { opacity: 1, y: 0, duration: 0.7 },
-          "-=0.5"
+          "-=0.5",
         )
         .fromTo(
           ctaRef.current,
           { opacity: 0, y: 20 },
           { opacity: 1, y: 0, duration: 0.6 },
-          "-=0.4"
+          "-=0.4",
         )
         .fromTo(
           imageRef.current,
           { opacity: 0, y: 60, scale: 0.95 },
           { opacity: 1, y: 0, scale: 1, duration: 1, ease: "power2.out" },
-          "-=0.6"
+          "-=0.6",
         );
 
       floatingRefs.current.forEach((el, i) => {
@@ -69,7 +69,7 @@ export default function HeroSection() {
             duration: 0.5,
             delay: 1.2 + i * 0.15,
             ease: "back.out(1.7)",
-          }
+          },
         );
         gsap.to(el, {
           y: "-=10",
@@ -112,7 +112,9 @@ export default function HeroSection() {
       {FLOATING_BADGES.map((b, i) => (
         <div
           key={b.label}
-          ref={(el) => { floatingRefs.current[i] = el; }}
+          ref={(el) => {
+            floatingRefs.current[i] = el;
+          }}
           className="absolute hidden lg:flex items-center gap-2 px-3 py-2 rounded-xl text-xs font-medium"
           style={{
             top: b.top,
@@ -181,7 +183,10 @@ export default function HeroSection() {
         </p>
 
         {/* CTA Buttons */}
-        <div ref={ctaRef} className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fadein-delay3">
+        <div
+          ref={ctaRef}
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 animate-fadein-delay3"
+        >
           <Link
             href="/sign-up"
             className="group flex items-center gap-2 px-7 py-3.5 rounded-xl font-semibold text-white text-base transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
@@ -212,12 +217,16 @@ export default function HeroSection() {
         </div>
 
         {/* Hero Image / Dashboard Preview */}
-        <div ref={imageRef} className="relative max-w-4xl mx-auto animate-fadein-delay4">
+        <div
+          ref={imageRef}
+          className="relative max-w-4xl mx-auto animate-fadein-delay4"
+        >
           <div
             className="rounded-2xl overflow-hidden"
             style={{
               border: "1px solid rgba(255,255,255,0.08)",
-              boxShadow: "0 40px 120px rgba(0,0,0,0.6), 0 0 60px rgba(99,102,241,0.15)",
+              boxShadow:
+                "0 40px 120px rgba(0,0,0,0.6), 0 0 60px rgba(99,102,241,0.15)",
             }}
           >
             <div

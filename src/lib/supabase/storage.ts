@@ -8,10 +8,10 @@ import { createClient } from "./client";
 
 // Supabase Dashboard এ এই bucket গুলো আগে তৈরি করতে হবে।
 export const BUCKETS = {
-  AVATARS: "avatars",         // ইউজার প্রোফাইল ছবি
-  ORG_LOGOS: "org-logos",     // অর্গানাইজেশন লোগো
-  SYLLABI: "syllabi",         // সিলেবাস ফাইল (PDF/IMG)
-  BOOKS: "books",             // কাস্টম বই আপলোড
+  AVATARS: "avatars", // ইউজার প্রোফাইল ছবি
+  ORG_LOGOS: "org-logos", // অর্গানাইজেশন লোগো
+  SYLLABI: "syllabi", // সিলেবাস ফাইল (PDF/IMG)
+  BOOKS: "books", // কাস্টম বই আপলোড
   QUESTION_IMGS: "question-images", // প্রশ্নে ব্যবহৃত ছবি
 } as const;
 
@@ -96,7 +96,7 @@ export async function replaceFile({
 export function buildStoragePath(
   userId: string,
   fileName: string,
-  prefix?: string
+  prefix?: string,
 ): string {
   const timestamp = Date.now();
   const ext = fileName.split(".").pop() ?? "";

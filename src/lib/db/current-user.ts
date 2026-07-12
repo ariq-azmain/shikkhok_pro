@@ -26,7 +26,7 @@ export async function getUserOrgRole(clerkId: string, orgId: string) {
   const user = await getUserByClerkId(clerkId);
   if (!user) return null;
   const membership = user.orgMemberships.find(
-    (m: { orgId: string }) => m.orgId === orgId
+    (m: { orgId: string }) => m.orgId === orgId,
   );
   return membership?.role ?? null;
 }

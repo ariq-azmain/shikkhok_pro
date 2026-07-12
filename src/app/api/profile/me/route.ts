@@ -53,14 +53,14 @@ export async function PATCH(req: Request) {
       if (trimmed.length < 2 || trimmed.length > 60) {
         return NextResponse.json(
           { error: "Display name must be 2–60 characters" },
-          { status: 422 }
+          { status: 422 },
         );
       }
     }
     if (bio !== undefined && bio.length > 200) {
       return NextResponse.json(
         { error: "Bio must be 200 characters or fewer" },
-        { status: 422 }
+        { status: 422 },
       );
     }
 

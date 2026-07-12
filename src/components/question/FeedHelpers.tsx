@@ -6,7 +6,10 @@ export type Filters = {
 
 export function SkeletonCard() {
   return (
-    <div className="rounded-2xl p-5 border border-white/5 animate-pulse" style={{ background: "var(--bg-card)" }}>
+    <div
+      className="rounded-2xl p-5 border border-white/5 animate-pulse"
+      style={{ background: "var(--bg-card)" }}
+    >
       <div className="flex items-center gap-3 mb-4">
         <div className="w-9 h-9 rounded-full bg-white/5" />
         <div className="flex-1 space-y-1.5">

@@ -10,16 +10,28 @@ export const metadata: Metadata = {
   title: "Teacher — Shikkhok Pro",
 };
 
-export default async function TeacherLayout({ children }: { children: React.ReactNode }) {
+export default async function TeacherLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const { userId: clerkId } = await auth();
   const supabase = await createClient();
 
   // fetch minimal user summary
-  const { data: dbUser } = await supabase.from("users").select("id, username, displayName, avatar, accountType").eq("clerkId", clerkId).maybeSingle();
+  const { data: dbUser } = await supabase
+    .from("users")
+    .select("id, username, displayName, avatar, accountType")
+    .eq("clerkId", clerkId)
+    .maybeSingle();
 
   if (!dbUser) {
     // render a simple shell if user missing
-    return <div className="min-h-screen flex items-center justify-center">Please sign in</div>;
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        Please sign in
+      </div>
+    );
   }
 
   const user = {
@@ -30,9 +42,5 @@ export default async function TeacherLayout({ children }: { children: React.Reac
     accountType: dbUser.accountType,
   };
 
-  return (
-    <TeacherShell user={user as any}>
-      {children}
-    </TeacherShell>
-  );
+  return <TeacherShell user={user as any}>{children}</TeacherShell>;
 }

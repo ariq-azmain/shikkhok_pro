@@ -57,7 +57,9 @@ export function ProfileSettings() {
     <form onSubmit={handleSave} className="max-w-xl flex flex-col gap-7">
       {/* Avatar */}
       <div>
-        <label className="block text-sm font-semibold text-gray-300 mb-3">Profile Photo</label>
+        <label className="block text-sm font-semibold text-gray-300 mb-3">
+          Profile Photo
+        </label>
         <div className="flex items-center gap-5">
           <ProfileAvatar
             src={localAvatar}
@@ -82,7 +84,10 @@ export function ProfileSettings() {
 
       {/* Display Name */}
       <div>
-        <label htmlFor="displayName" className="block text-sm font-semibold text-gray-300 mb-2">
+        <label
+          htmlFor="displayName"
+          className="block text-sm font-semibold text-gray-300 mb-2"
+        >
           Display Name
           <span className="text-red-400 ml-0.5">*</span>
         </label>
@@ -97,33 +102,62 @@ export function ProfileSettings() {
           className={cn(
             "w-full rounded-xl px-4 py-3 text-sm outline-none transition-all duration-200",
             "bg-muted-20 border border-muted-2 text-white placeholder:text-gray-600",
-            "focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30"
+            "focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30",
           )}
         />
-        <p className="text-xs text-gray-600 mt-1 text-right">{displayName.length}/60</p>
+        <p className="text-xs text-gray-600 mt-1 text-right">
+          {displayName.length}/60
+        </p>
       </div>
 
       {/* Username (read-only) */}
       <div>
-        <label className="block text-sm font-semibold text-gray-300 mb-2">Username</label>
-        <div className={cn("w-full rounded-xl px-4 py-3 text-sm", "bg-muted-10 border border-muted text-gray-500 select-none cursor-not-allowed")}>
+        <label className="block text-sm font-semibold text-gray-300 mb-2">
+          Username
+        </label>
+        <div
+          className={cn(
+            "w-full rounded-xl px-4 py-3 text-sm",
+            "bg-muted-10 border border-muted text-gray-500 select-none cursor-not-allowed",
+          )}
+        >
           @{profile.username}
         </div>
-        <p className="text-xs text-gray-600 mt-1">Username cannot be changed after signup.</p>
+        <p className="text-xs text-gray-600 mt-1">
+          Username cannot be changed after signup.
+        </p>
       </div>
 
       {/* Email (read-only) */}
       <div>
-        <label className="block text-sm font-semibold text-gray-300 mb-2">Email</label>
-        <div className={cn("w-full rounded-xl px-4 py-3 text-sm", "bg-muted-10 border border-muted text-gray-500 select-none cursor-not-allowed")}>
+        <label className="block text-sm font-semibold text-gray-300 mb-2">
+          Email
+        </label>
+        <div
+          className={cn(
+            "w-full rounded-xl px-4 py-3 text-sm",
+            "bg-muted-10 border border-muted text-gray-500 select-none cursor-not-allowed",
+          )}
+        >
           {profile.email}
         </div>
-        <p className="text-xs text-gray-600 mt-1">Manage your email in <a href="/user-settings" className="text-indigo-400 hover:underline">account settings</a>.</p>
+        <p className="text-xs text-gray-600 mt-1">
+          Manage your email in{" "}
+          <a href="/user-settings" className="text-indigo-400 hover:underline">
+            account settings
+          </a>
+          .
+        </p>
       </div>
 
       {/* Bio */}
       <div>
-        <label htmlFor="bio" className="block text-sm font-semibold text-gray-300 mb-2">Bio <span className="text-gray-600 font-normal ml-1">(optional)</span></label>
+        <label
+          htmlFor="bio"
+          className="block text-sm font-semibold text-gray-300 mb-2"
+        >
+          Bio <span className="text-gray-600 font-normal ml-1">(optional)</span>
+        </label>
         <textarea
           id="bio"
           value={bio}
@@ -134,19 +168,31 @@ export function ProfileSettings() {
           className={cn(
             "w-full rounded-xl px-4 py-3 text-sm resize-none outline-none transition-all duration-200",
             "bg-muted-20 border border-muted-2 text-white placeholder:text-gray-600",
-            "focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30"
+            "focus:border-indigo-500/50 focus:ring-1 focus:ring-indigo-500/30",
           )}
         />
-        <p className="text-xs text-gray-600 mt-1 text-right">{bio.length}/200</p>
+        <p className="text-xs text-gray-600 mt-1 text-right">
+          {bio.length}/200
+        </p>
       </div>
 
       {/* Account type (read-only) */}
       <div>
-        <label className="block text-sm font-semibold text-gray-300 mb-2">Account Type</label>
-        <div className={cn("w-full rounded-xl px-4 py-3 text-sm", "bg-muted-10 border border-muted text-gray-500 select-none cursor-not-allowed")}>
-          {profile.accountType.charAt(0) + profile.accountType.slice(1).toLowerCase()}
+        <label className="block text-sm font-semibold text-gray-300 mb-2">
+          Account Type
+        </label>
+        <div
+          className={cn(
+            "w-full rounded-xl px-4 py-3 text-sm",
+            "bg-muted-10 border border-muted text-gray-500 select-none cursor-not-allowed",
+          )}
+        >
+          {profile.accountType.charAt(0) +
+            profile.accountType.slice(1).toLowerCase()}
         </div>
-        <p className="text-xs text-gray-600 mt-1">Set during onboarding. Contact support to change.</p>
+        <p className="text-xs text-gray-600 mt-1">
+          Set during onboarding. Contact support to change.
+        </p>
       </div>
 
       {/* Error */}
@@ -174,7 +220,7 @@ export function ProfileSettings() {
           "px-7 py-3 rounded-xl text-sm font-semibold transition-all duration-200",
           isBusy || !displayName.trim()
             ? "bg-muted-20 text-gray-600 cursor-not-allowed"
-            : "bg-indigo-500 text-white hover:bg-indigo-600 hover:shadow-lg hover:shadow-indigo-500/20"
+            : "bg-indigo-500 text-white hover:bg-indigo-600 hover:shadow-lg hover:shadow-indigo-500/20",
         )}
       >
         {saving ? "Saving…" : "Save Changes"}

@@ -8,14 +8,19 @@ import { useQuestionFeed } from "@/hooks/useQuestionFeed";
 import { Filters, SkeletonCard } from "@/components/question/FeedHelpers";
 
 export default function FeedPage() {
-  const [filters, setFilters] = useState<Filters>({ subject: "", className: "", difficulty: "" });
+  const [filters, setFilters] = useState<Filters>({
+    subject: "",
+    className: "",
+    difficulty: "",
+  });
   const [showFilters, setShowFilters] = useState(false);
 
-  const { questions, loading, loadingMore, error, hasMore, setSentinel } = useQuestionFeed({
-    subject: filters.subject,
-    className: filters.className,
-    difficulty: filters.difficulty,
-  });
+  const { questions, loading, loadingMore, error, hasMore, setSentinel } =
+    useQuestionFeed({
+      subject: filters.subject,
+      className: filters.className,
+      difficulty: filters.difficulty,
+    });
 
   function handleFilterChange(key: keyof Filters, value: string) {
     setFilters((prev) => ({ ...prev, [key]: value }));
@@ -24,11 +29,15 @@ export default function FeedPage() {
   const activeFilterCount = Object.values(filters).filter(Boolean).length;
 
   return (
-    <main className="relative min-h-screen" style={{ background: "var(--bg-primary)" }}>
+    <main
+      className="relative min-h-screen"
+      style={{ background: "var(--bg-primary)" }}
+    >
       <div
         className="fixed inset-0 pointer-events-none z-0"
         style={{
-          background: "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99,102,241,0.10) 0%, transparent 60%)",
+          background:
+            "radial-gradient(ellipse 80% 50% at 50% -20%, rgba(99,102,241,0.10) 0%, transparent 60%)",
         }}
       />
 
@@ -38,12 +47,16 @@ export default function FeedPage() {
           <div>
             <div className="flex items-center gap-2 mb-1">
               <BookOpen size={18} className="text-indigo-400" />
-              <h1 className="text-2xl font-extrabold" style={{ color: "var(--text-primary)" }}>
+              <h1
+                className="text-2xl font-extrabold"
+                style={{ color: "var(--text-primary)" }}
+              >
                 Feed
               </h1>
             </div>
             <p className="text-sm" style={{ color: "var(--text-muted)" }}>
-              Questions and papers from teachers you follow and the wider community
+              Questions and papers from teachers you follow and the wider
+              community
             </p>
           </div>
 
@@ -54,7 +67,12 @@ export default function FeedPage() {
                 ? "border-indigo-500/50 text-indigo-400 bg-indigo-500/10"
                 : "border-white/10 hover:border-white/20"
             }`}
-            style={{ color: showFilters || activeFilterCount > 0 ? undefined : "var(--text-secondary)" }}
+            style={{
+              color:
+                showFilters || activeFilterCount > 0
+                  ? undefined
+                  : "var(--text-secondary)",
+            }}
           >
             Filter
             {activeFilterCount > 0 && (
@@ -98,10 +116,16 @@ export default function FeedPage() {
             {questions.length === 0 ? (
               <div className="text-center py-20">
                 <Inbox size={40} className="mx-auto mb-3 text-slate-600" />
-                <p className="font-semibold" style={{ color: "var(--text-secondary)" }}>
+                <p
+                  className="font-semibold"
+                  style={{ color: "var(--text-secondary)" }}
+                >
                   No questions found
                 </p>
-                <p className="text-sm mt-1" style={{ color: "var(--text-muted)" }}>
+                <p
+                  className="text-sm mt-1"
+                  style={{ color: "var(--text-muted)" }}
+                >
                   Try adjusting your filters
                 </p>
               </div>
@@ -115,13 +139,21 @@ export default function FeedPage() {
 
             {/* Sentinel for infinite scroll */}
             {hasMore && (
-              <div ref={setSentinel} className="h-10 flex items-center justify-center mt-4">
-                {loadingMore && <Loader2 size={20} className="animate-spin text-indigo-400" />}
+              <div
+                ref={setSentinel}
+                className="h-10 flex items-center justify-center mt-4"
+              >
+                {loadingMore && (
+                  <Loader2 size={20} className="animate-spin text-indigo-400" />
+                )}
               </div>
             )}
 
             {!hasMore && questions.length > 0 && (
-              <p className="text-center text-xs mt-8 pb-4" style={{ color: "var(--text-muted)" }}>
+              <p
+                className="text-center text-xs mt-8 pb-4"
+                style={{ color: "var(--text-muted)" }}
+              >
                 You've seen all questions
               </p>
             )}

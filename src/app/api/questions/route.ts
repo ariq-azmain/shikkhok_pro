@@ -4,7 +4,7 @@ import { NextResponse } from "next/server";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 const PAGE_SIZE = 10;
@@ -19,7 +19,8 @@ export async function GET(req: Request) {
 
     let query = supabase
       .from("questions")
-      .select(`
+      .select(
+        `
         id, title, content, subject, "className", chapter, topic,
         difficulty, "totalMarks", "timeMinutes", visibility,
         "aiGenerated", "likesCount", "commentsCount", "viewsCount",
@@ -27,7 +28,8 @@ export async function GET(req: Request) {
         creator:users!questions_createdById_fkey (
           id, username, "displayName", avatar, "accountType"
         )
-      `)
+      `,
+      )
       .eq("visibility", "PUBLIC")
       .is("deletedAt", null)
       .order("createdAt", { ascending: false })
@@ -46,7 +48,9 @@ export async function GET(req: Request) {
 
     const hasMore = data.length > PAGE_SIZE;
     const questions = hasMore ? data.slice(0, PAGE_SIZE) : data;
-    const nextCursor = hasMore ? questions[questions.length - 1].createdAt : null;
+    const nextCursor = hasMore
+      ? questions[questions.length - 1].createdAt
+      : null;
 
     return NextResponse.json({ data: questions, nextCursor });
   } catch (err: any) {

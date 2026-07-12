@@ -47,7 +47,7 @@ export async function syncUserFromClerk({
         onConflict: "clerkId",
         // On conflict, only update these fields (not username/accountType)
         ignoreDuplicates: false,
-      }
+      },
     )
     .select("id, clerkId, username, displayName, email, avatar, accountType")
     .single();
@@ -90,7 +90,7 @@ export async function getUserPublicProfile(username: string) {
   const { data, error } = await supabaseAdmin
     .from("users")
     .select(
-      `id, username, "displayName", avatar, bio, "accountType", "createdAt"`
+      `id, username, "displayName", avatar, bio, "accountType", "createdAt"`,
     )
     .eq("username", username)
     .is("deletedAt", null)
@@ -117,7 +117,7 @@ const PAGE_SIZE = 12;
 
 export async function getUserPublicQuestions(
   userId: string,
-  cursor?: string // last createdAt value
+  cursor?: string, // last createdAt value
 ) {
   let query = supabaseAdmin
     .from("questions")
@@ -128,7 +128,7 @@ export async function getUserPublicQuestions(
       creator:users!questions_createdById_fkey (
         id, username, "displayName", avatar, "accountType"
       )
-    `
+    `,
     )
     .eq("createdById", userId)
     .eq("visibility", "PUBLIC")
@@ -154,11 +154,12 @@ export async function getUserPublicQuestions(
 // ── Update profile fields ──────────────────────────────────────
 export async function updateUserProfile(
   clerkId: string,
-  payload: ProfileUpdatePayload
+  payload: ProfileUpdatePayload,
 ) {
   // Build update object — only include defined keys
   const update: Record<string, unknown> = {};
-  if (payload.displayName !== undefined) update.displayName = payload.displayName;
+  if (payload.displayName !== undefined)
+    update.displayName = payload.displayName;
   if (payload.bio !== undefined) update.bio = payload.bio || null;
   if (payload.avatar !== undefined) update.avatar = payload.avatar;
 
@@ -166,9 +167,7 @@ export async function updateUserProfile(
     .from("users")
     .update(update)
     .eq("clerkId", clerkId)
-    .select(
-      `id, username, "displayName", avatar, bio, "accountType"`
-    )
+    .select(`id, username, "displayName", avatar, bio, "accountType"`)
     .single();
 
   if (error) throw new Error(`updateUserProfile: ${error.message}`);
@@ -178,7 +177,7 @@ export async function updateUserProfile(
 // ── Update account type (onboarding) ──────────────────────────
 export async function updateUserAccountType(
   clerkId: string,
-  accountType: "TEACHER" | "STUDENT" | "PARENT"
+  accountType: "TEACHER" | "STUDENT" | "PARENT",
 ) {
   const { data, error } = await supabaseAdmin
     .from("users")

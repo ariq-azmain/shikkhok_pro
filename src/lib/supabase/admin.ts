@@ -23,7 +23,7 @@ export const supabaseAdmin =
         autoRefreshToken: false,
         persistSession: false,
       },
-    }
+    },
   );
 
 if (process.env.NODE_ENV !== "production") {

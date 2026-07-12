@@ -46,7 +46,7 @@ export default function FeaturesSection() {
             trigger: titleRef.current,
             start: "top 85%",
           },
-        }
+        },
       );
 
       cardsRef.current.forEach((el, i) => {
@@ -66,7 +66,7 @@ export default function FeaturesSection() {
               start: "top 88%",
               toggleActions: "play none none none",
             },
-          }
+          },
         );
       });
     }, sectionRef);
@@ -99,8 +99,7 @@ export default function FeaturesSection() {
             <br />
             <span
               style={{
-                background:
-                  "linear-gradient(135deg, #818cf8 0%, #a855f7 100%)",
+                background: "linear-gradient(135deg, #818cf8 0%, #a855f7 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
                 backgroundClip: "text",
@@ -122,19 +121,25 @@ export default function FeaturesSection() {
             return (
               <div
                 key={feature.id}
-                ref={(el) => { cardsRef.current[i] = el; }}
+                ref={(el) => {
+                  cardsRef.current[i] = el;
+                }}
                 className="group relative p-6 rounded-2xl transition-all duration-300 cursor-default"
                 style={{
                   background: "rgba(18,18,31,0.7)",
                   border: "1px solid rgba(255,255,255,0.06)",
                 }}
                 onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLDivElement).style.border = `1px solid ${feature.color}40`;
-                  (e.currentTarget as HTMLDivElement).style.background = "rgba(22,22,42,0.9)";
+                  (e.currentTarget as HTMLDivElement).style.border =
+                    `1px solid ${feature.color}40`;
+                  (e.currentTarget as HTMLDivElement).style.background =
+                    "rgba(22,22,42,0.9)";
                 }}
                 onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLDivElement).style.border = "1px solid rgba(255,255,255,0.06)";
-                  (e.currentTarget as HTMLDivElement).style.background = "rgba(18,18,31,0.7)";
+                  (e.currentTarget as HTMLDivElement).style.border =
+                    "1px solid rgba(255,255,255,0.06)";
+                  (e.currentTarget as HTMLDivElement).style.background =
+                    "rgba(18,18,31,0.7)";
                 }}
               >
                 <div
@@ -144,15 +149,15 @@ export default function FeaturesSection() {
                     border: `1px solid ${feature.color}30`,
                   }}
                 >
-                  <Icon
-                    className="text-xl"
-                    style={{ color: feature.color }}
-                  />
+                  <Icon className="text-xl" style={{ color: feature.color }} />
                 </div>
                 <h3 className="text-base font-semibold text-white mb-2">
                   {feature.title}
                 </h3>
-                <p className="text-sm leading-relaxed" style={{ color: "#64748b" }}>
+                <p
+                  className="text-sm leading-relaxed"
+                  style={{ color: "#64748b" }}
+                >
                   {feature.description}
                 </p>
               </div>

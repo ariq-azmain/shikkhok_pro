@@ -22,7 +22,10 @@ export function usePublicProfile(username: string) {
     fetch(`/api/profile/${encodeURIComponent(username)}`)
       .then(async (res) => {
         if (cancelled) return;
-        if (res.status === 404) { setNotFound(true); return; }
+        if (res.status === 404) {
+          setNotFound(true);
+          return;
+        }
         if (!res.ok) {
           const json = await res.json().catch(() => ({}));
           throw new Error(json.error ?? "Failed to load profile");
@@ -30,11 +33,16 @@ export function usePublicProfile(username: string) {
         setProfile(await res.json());
       })
       .catch((err: unknown) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : "Unknown error");
+        if (!cancelled)
+          setError(err instanceof Error ? err.message : "Unknown error");
       })
-      .finally(() => { if (!cancelled) setLoading(false); });
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [username]);
 
   return { profile, loading, notFound, error };

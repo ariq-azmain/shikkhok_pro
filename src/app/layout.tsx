@@ -10,7 +10,7 @@ import PWAInstall from "@/components/PWAInstall";
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-inter", 
+  variable: "--font-inter",
   display: "swap",
 });
 
@@ -35,7 +35,9 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default function RootLayout({
+  children,
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" className="dark">
       <body className={` ${inter.variable} antialiased`}>
@@ -45,7 +47,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             cssLayerName: "clerk",
           }}
         >
-        <PWAInstall/>
+          <PWAInstall />
           {children}
           <Analytics />
           <ServiceWorkerRegister />

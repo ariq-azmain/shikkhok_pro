@@ -29,7 +29,7 @@ export function useQuestionFeed(filters: Filters = {}) {
       if (filters.difficulty) params.set("difficulty", filters.difficulty);
       return `/api/questions?${params.toString()}`;
     },
-    [filters.subject, filters.className, filters.difficulty]
+    [filters.subject, filters.className, filters.difficulty],
   );
 
   const fetchQuestions = useCallback(async () => {
@@ -85,11 +85,11 @@ export function useQuestionFeed(filters: Filters = {}) {
             fetchMore();
           }
         },
-        { threshold: 0.1 }
+        { threshold: 0.1 },
       );
       observerRef.current.observe(node);
     },
-    [hasMore, loadingMore, fetchMore]
+    [hasMore, loadingMore, fetchMore],
   );
 
   // Filter বদলালে refetch করো
@@ -102,5 +102,13 @@ export function useQuestionFeed(filters: Filters = {}) {
     return () => observerRef.current?.disconnect();
   }, []);
 
-  return { questions, loading, loadingMore, error, hasMore, setSentinel, refetch: fetchQuestions };
+  return {
+    questions,
+    loading,
+    loadingMore,
+    error,
+    hasMore,
+    setSentinel,
+    refetch: fetchQuestions,
+  };
 }

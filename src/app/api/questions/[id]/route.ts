@@ -4,16 +4,20 @@ import { NextResponse } from "next/server";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
+export async function GET(
+  _req: Request,
+  { params }: { params: { id: string } },
+) {
   try {
     const { id } = await params;
 
     const { data, error } = await supabase
       .from("questions")
-      .select(`
+      .select(
+        `
         id, title, content, subject, "className", chapter, topic,
         difficulty, "totalMarks", "timeMinutes", visibility,
         "aiGenerated", "likesCount", "commentsCount", "viewsCount",
@@ -21,14 +25,18 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
         creator:users!questions_createdById_fkey (
           id, username, "displayName", avatar, "accountType"
         )
-      `)
+      `,
+      )
       .eq("id", id)
       .eq("visibility", "PUBLIC")
       .is("deletedAt", null)
       .single();
 
     if (error || !data) {
-      return NextResponse.json({ error: "Question not found" }, { status: 404 });
+      return NextResponse.json(
+        { error: "Question not found" },
+        { status: 404 },
+      );
     }
 
     // Increment view count

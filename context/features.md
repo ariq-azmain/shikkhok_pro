@@ -9,7 +9,7 @@
 
 # features for `TEACHER` Account
 
-teachers have a dashboard. everything spacifide features is inside of teacher's dashboard.
+> teachers have a dashboard. everything spacifide features is inside of teacher's dashboard.
 
 ## Indivusal:
 
@@ -19,7 +19,7 @@ teachers have a dashboard. everything spacifide features is inside of teacher's 
 
 ## **Organization**:
 
-A Teacher Account User can create **Organization**. It is a whole system for genarate questions and task manegment and notice board.
+> A Teacher Account User can create **Organization**. It is a whole system for genarate questions and task manegment and notice board.
 
 1. create **Organization**
 2. By deafult, **Organization**'s craetor is got **Principul** rule of **Organization**.
@@ -34,7 +34,7 @@ A Teacher Account User can create **Organization**. It is a whole system for gen
 
 ## Qusetion Bank
 
-Question Bank only can create in a **Organization**. It is like of a Question Holder.
+> Question Bank only can create in a **Organization**. It is like of a Question Holder.
 
 ### A Question will be kinds of 3:
 
@@ -61,25 +61,23 @@ Question Bank only can create in a **Organization**. It is like of a Question Ho
     - Normal
     - Hard
 3. Spacifide sylabus. uploade sylabus on format:
-    - PNG/JPG/JPEG
     - PDF
+    - PNG/JPG/JPEG
     - DOCX/DOC
-    - Others relavent formates
 4. If dont have sylabus, manualy Spacifide chapter.
 5. Genatate Question With BBangladesh's NCTB Curriculam.
 6. AI Must should have access the Bangladesh's Board Books from class 1-10 and HSC, SSC.
 7. Teacher can create questions without Board book, by uploading the others books. Book Uploade Format:
-    - PNG/JPG/JPEG
     - PDF
+    - PNG/JPG/JPEG
     - DOCX/DOC
-    - Others relavent formates
 8. teachers can create question without any books, by prompt to AI.
 9. AI Always make an **MD** code. teacher preview the md as question in the platfrom
 10. AI Genarated Question is editable in Question editor
 
 ### Question Editor
 
-If the user don't want to Question Genaration With AI Then, It solve the problem
+> If the user don't want to Question Genaration With AI Then, It solve the problem
 
 1. There war an **Question Edetor** Were teachers can create question by heand.
 2. Inside of the **Question Edetor**, There was an **book**. the teacher create question from the **book**, teachers can capy text from the book.
@@ -100,39 +98,29 @@ If the user don't want to Question Genaration With AI Then, It solve the problem
     - **Table**
     - **sup/sub text/numbers**
 5. teacher can append img in question
-6. teacher can create diffarent shaps like:
-    - Tringle
-    - Rectengle
-    - Circle
-    - Cilinder
-    - Arroy
-    - cross
-    - tick
-    - others
-    - custom cursor/touch shaps
-7. teacher can append diffarents icons from inside of the platform
-8. there should be some pre defind Question's layouts, teacher can edit the layout or start from scrach
-9. there should be some pre defind Question's components like:
+6. teacher can append diffarents icons from inside of the platform
+7. there should be some pre defind Question's layouts, teacher can edit the layout or start from scrach
+8. there should be some pre defind Question's components like:
     - A single **MCQ** question's modle with damo data.
     - multipul **MCQ** question's layouts with damo data.
     - **CQ** question's modle/layouts with damo data
     - Others.
-10. Teacher can export the question on format:
+9. Teacher can export the question on format:
     - PDF
     - DOCX/DOC
     - PNH/JPG/JPRG
-    - MD
-11. the hend made question is same to ai made question for:
+10. the hend made question is same to ai made question for:
     - browse
     - shear
     - status (PUBLIC/PRIVET/SCHOOL)
-12. the bangla laters is must be stable, not broke
-13. teacher can change laters font in the platfrom
-14. the question editor must should be real-time
+    - every thing
+11. the bangla laters is must be stable, not broke
+12. teacher can change laters font in the platfrom
+13. the question editor must should be real-time
 
 ## Task Manegment System
 
-It is a Org only features.
+> It is a Org only features.
 
 1. A Task Management system for org's member
 2. PRINCIPUL and ADMIN can assing task to ORG_TEACHERs.
@@ -153,8 +141,8 @@ It is a Org only features.
 
 ## Notice Board
 
-It is super simple
-It is a Org only features too.
+> It is super simple
+> It is a Org only features too.
 
 1. ADMIN, PRINCIPUL can create a notice
 2. PRINCIPUL and ADMIN can `CRUD` the notice
@@ -168,8 +156,8 @@ It is a Org only features too.
 
 ## massaging
 
-Orgnazition's member's can chat betwine in real-time.
-It not impliment by scratch, Rather than I want to use `StreamChat` type pre build solution.
+> Orgnazition's member's can chat betwine in real-time.
+> It not impliment by scratch, Rather than I want to use `StreamChat` type pre build solution.
 
 1. The teachers can see all organization's members and can chat them.
 2. It is similer For ADMIN and PRINCIPUL as a normal teacher, but there will be a little lable above the ADMIN's and PRINCIPUL's avater: `Admin` or `Principul`.
@@ -179,7 +167,7 @@ It not impliment by scratch, Rather than I want to use `StreamChat` type pre bui
 
 # features for `STUDENT` and `PARENT` Account
 
-In DashBoard, there them can just browse question and like/comment/shear.
+> In DashBoard, there them can just browse question and like/comment/shear.
 
 # Role Permission Matrix
 

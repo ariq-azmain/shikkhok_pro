@@ -1,0 +1,4 @@
+chake /shikkhok-pro/src/components/teacher/dashboard/DashboardShell.tsx and an modify it by receiving a recent activitie's props and pass that props into /shikkhok-pro/src/components/teacher/dashboard/TopCharts.tsx component and remove the demo consts (demoLabels,demoData,demoActivity) and replace them by props data. you should create a hook named useActivitie in /src/hooks/useActivitie.ts
+
+this hook fetch data from db and combined them and return activitie data as a usable format. You should remove and delete DashboardShell.tsx component, In shikkhok-pro/src/app/(teacher)/dashboard/page.tsx, you should use this hook and return charts and sections as like DashboardShell.tsx component. the page.tsx page should be vary clean and there is should not any db fetchs, all fetchs and calculation are should happend on useActivitie.ts hook.
+

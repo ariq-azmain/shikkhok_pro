@@ -29,9 +29,13 @@ export default function TaskCard({ task, onClick }: TaskCardProps) {
         <div className="flex-shrink-0">{statusIcon[task.status]}</div>
       </div>
       <div className="mt-2 flex items-center justify-between">
-        <span className="text-xs px-2 py-1 rounded-full bg-muted-20 text-[var(--text-secondary)]">{task.status}</span>
+        <span className="text-xs px-2 py-1 rounded-full bg-muted-20 text-[var(--text-secondary)]">
+          {task.status}
+        </span>
         {task.expireDate && (
-          <span className="text-xs text-muted">{new Date(task.expireDate).toLocaleDateString()}</span>
+          <span className="text-xs text-muted">
+            {new Date(task.expireDate).toLocaleDateString()}
+          </span>
         )}
       </div>
     </button>

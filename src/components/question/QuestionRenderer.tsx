@@ -4,7 +4,10 @@ import type { QuestionContent, QuestionItem } from "@/types/question";
 function MCQQuestion({ item }: { item: QuestionItem }) {
   return (
     <div className="space-y-2">
-      <p className="text-sm leading-relaxed" style={{ color: "var(--text-primary)" }}>
+      <p
+        className="text-sm leading-relaxed"
+        style={{ color: "var(--text-primary)" }}
+      >
         <span className="font-bold text-indigo-400 mr-2">{item.no}.</span>
         {item.text}
       </p>
@@ -31,9 +34,14 @@ function MCQQuestion({ item }: { item: QuestionItem }) {
 function ShortQuestion({ item }: { item: QuestionItem }) {
   return (
     <div className="flex gap-3">
-      <span className="font-bold text-indigo-400 flex-shrink-0 text-sm">{item.no}.</span>
+      <span className="font-bold text-indigo-400 flex-shrink-0 text-sm">
+        {item.no}.
+      </span>
       <div className="flex-1">
-        <p className="text-sm leading-relaxed whitespace-pre-wrap" style={{ color: "var(--text-primary)" }}>
+        <p
+          className="text-sm leading-relaxed whitespace-pre-wrap"
+          style={{ color: "var(--text-primary)" }}
+        >
           {item.text}
         </p>
         {item.marks && (
@@ -62,7 +70,10 @@ export default function QuestionRenderer({ content }: Props) {
             className="flex items-center justify-between px-4 py-2.5 rounded-xl mb-4"
             style={{ background: "var(--bg-secondary)" }}
           >
-            <h4 className="font-bold text-sm" style={{ color: "var(--text-primary)" }}>
+            <h4
+              className="font-bold text-sm"
+              style={{ color: "var(--text-primary)" }}
+            >
               {section.title}
             </h4>
             <span className="text-xs font-semibold text-indigo-400">
@@ -81,7 +92,7 @@ export default function QuestionRenderer({ content }: Props) {
               );
             })}
           </div>
-        </div> 
+        </div>
       ))}
     </div>
   );

@@ -16,11 +16,11 @@
 ## Phase 2 — Core Question Features (সপ্তাহ ৩-৪)
 
 - [x] Teacher Dashboard
+- [ ] Question Editor (TipTap + shapes + icons)
 - [ ] Question Bank CRUD (org only)
 - [ ] AI প্রশ্ন জেনারেটর (step-by-step wizard)
 - [ ] NCTB Curriculum data integration
 - [ ] Syllabus / Book file upload to AI
-- [ ] Question Editor (TipTap + shapes + icons)
 - [ ] AI inline suggestions in editor
 - [ ] Question export (PDF/DOCX/PNG/MD)
 

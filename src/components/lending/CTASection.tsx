@@ -14,10 +14,18 @@ export default function CTASection() {
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger);
     const ctx = gsap.context(() => {
-      gsap.fromTo(boxRef.current, { opacity: 0, y: 50, scale: 0.96 }, {
-        opacity: 1, y: 0, scale: 1, duration: 0.9, ease: "power2.out",
-        scrollTrigger: { trigger: boxRef.current, start: "top 85%" },
-      });
+      gsap.fromTo(
+        boxRef.current,
+        { opacity: 0, y: 50, scale: 0.96 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.9,
+          ease: "power2.out",
+          scrollTrigger: { trigger: boxRef.current, start: "top 85%" },
+        },
+      );
     }, sectionRef);
     return () => ctx.revert();
   }, []);
@@ -29,7 +37,8 @@ export default function CTASection() {
           ref={boxRef}
           className="relative overflow-hidden rounded-3xl px-8 py-16 text-center"
           style={{
-            background: "linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(168,85,247,0.15) 50%, rgba(34,211,238,0.1) 100%)",
+            background:
+              "linear-gradient(135deg, rgba(99,102,241,0.15) 0%, rgba(168,85,247,0.15) 50%, rgba(34,211,238,0.1) 100%)",
             border: "1px solid rgba(99,102,241,0.25)",
           }}
         >
@@ -37,21 +46,24 @@ export default function CTASection() {
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              background: "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(99,102,241,0.12) 0%, transparent 70%)",
+              background:
+                "radial-gradient(ellipse 80% 60% at 50% 50%, rgba(99,102,241,0.12) 0%, transparent 70%)",
             }}
           />
           {/* Decorative circles */}
           <div
             className="absolute -top-20 -left-20 w-64 h-64 rounded-full opacity-20 pointer-events-none"
             style={{
-              background: "radial-gradient(circle, #6366f1 0%, transparent 70%)",
+              background:
+                "radial-gradient(circle, #6366f1 0%, transparent 70%)",
               filter: "blur(40px)",
             }}
           />
           <div
             className="absolute -bottom-20 -right-20 w-64 h-64 rounded-full opacity-20 pointer-events-none"
             style={{
-              background: "radial-gradient(circle, #a855f7 0%, transparent 70%)",
+              background:
+                "radial-gradient(circle, #a855f7 0%, transparent 70%)",
               filter: "blur(40px)",
             }}
           />
@@ -73,7 +85,10 @@ export default function CTASection() {
               <br />
               You Create Exams?
             </h2>
-            <p className="text-lg mb-10 max-w-xl mx-auto" style={{ color: "#94a3b8" }}>
+            <p
+              className="text-lg mb-10 max-w-xl mx-auto"
+              style={{ color: "#94a3b8" }}
+            >
               Start for free today. No credit card required. Generate your first
               AI question paper in under 5 minutes.
             </p>
@@ -82,7 +97,8 @@ export default function CTASection() {
                 href="/sign-up"
                 className="group flex items-center gap-2 px-8 py-3.5 rounded-xl font-semibold text-white text-base transition-all duration-200 hover:opacity-90 hover:scale-[1.02]"
                 style={{
-                  background: "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
+                  background:
+                    "linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%)",
                   boxShadow: "0 0 40px rgba(99,102,241,0.4)",
                 }}
               >
@@ -102,7 +118,8 @@ export default function CTASection() {
               </Link>
             </div>
             <p className="mt-6 text-xs" style={{ color: "#475569" }}>
-              Free plan includes 20 AI generations/month · No credit card required
+              Free plan includes 20 AI generations/month · No credit card
+              required
             </p>
           </div>
         </div>

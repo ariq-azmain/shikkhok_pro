@@ -3,7 +3,9 @@ import type { SectionCardProps } from "@/types";
 import TaskCard from "./TaskCard";
 import NoticeCard from "./NoticeCard";
 
-export default function SectionCard<T extends Record<string, unknown>>(props: SectionCardProps<T>) {
+export default function SectionCard<T extends Record<string, unknown>>(
+  props: SectionCardProps<T>,
+) {
   const { title, count, href, items, type, isLoading } = props;
 
   return (
@@ -11,7 +13,9 @@ export default function SectionCard<T extends Record<string, unknown>>(props: Se
       <div>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-base font-semibold">{title}</h3>
-          <span className="text-sm px-2 py-1 rounded-full bg-muted-10 text-[var(--text-secondary)]">{count}</span>
+          <span className="text-sm px-2 py-1 rounded-full bg-muted-10 text-[var(--text-secondary)]">
+            {count}
+          </span>
         </div>
 
         {isLoading ? (
@@ -22,21 +26,34 @@ export default function SectionCard<T extends Record<string, unknown>>(props: Se
               if (type === "tasks") {
                 return <TaskCard key={(item as any).id} task={item as any} />;
               } else if (type === "notices") {
-                return <NoticeCard key={(item as any).id} notice={item as any} />;
+                return (
+                  <NoticeCard key={(item as any).id} notice={item as any} />
+                );
               }
 
               // Editor/Quick Links: render as anchor if href exists, otherwise plain text
               const itemWithHref = item as any;
               if (itemWithHref?.href) {
                 return (
-                  <Link key={itemWithHref.id} href={itemWithHref.href} className="text-sm text-indigo-400 hover:text-indigo-300 block">
+                  <Link
+                    key={itemWithHref.id}
+                    href={itemWithHref.href}
+                    className="text-sm text-indigo-400 hover:text-indigo-300 block"
+                  >
                     {itemWithHref.title || itemWithHref.name || itemWithHref.id}
                   </Link>
                 );
               }
 
               return (
-                <div key={(item as any).id} className="text-sm text-[var(--text-muted)]">{(item as any).title || (item as any).name || (item as any).id}</div>
+                <div
+                  key={(item as any).id}
+                  className="text-sm text-[var(--text-muted)]"
+                >
+                  {(item as any).title ||
+                    (item as any).name ||
+                    (item as any).id}
+                </div>
               );
             })}
           </div>
@@ -45,7 +62,12 @@ export default function SectionCard<T extends Record<string, unknown>>(props: Se
         )}
       </div>
 
-      <Link href={href} className="mt-4 text-sm font-medium text-indigo-400 hover:text-indigo-300 transition">View all →</Link>
+      <Link
+        href={href}
+        className="mt-4 text-sm font-medium text-indigo-400 hover:text-indigo-300 transition"
+      >
+        View all →
+      </Link>
     </div>
   );
 }

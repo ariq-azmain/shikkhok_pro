@@ -45,7 +45,7 @@ export function ProfileTabs({ isOwner, activeTab }: ProfileTabsProps) {
               "px-4 py-2.5 text-sm font-medium rounded-t-lg transition-all duration-200 -mb-px border-b-2",
               isActive
                 ? "text-indigo-400 border-indigo-500"
-                : "text-gray-500 border-transparent hover:text-gray-300 hover:border-white/10"
+                : "text-gray-500 border-transparent hover:text-gray-300 hover:border-white/10",
             )}
           >
             {tab.label}

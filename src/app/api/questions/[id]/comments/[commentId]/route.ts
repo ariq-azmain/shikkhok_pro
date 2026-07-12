@@ -5,13 +5,13 @@ import { NextResponse } from "next/server";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
 );
 
 // DELETE /api/questions/[id]/comments/[commentId]
 export async function DELETE(
   _req: Request,
-  { params }: { params: { id: string; commentId: string } }
+  { params }: { params: { id: string; commentId: string } },
 ) {
   try {
     const clerkUser = await currentUser();

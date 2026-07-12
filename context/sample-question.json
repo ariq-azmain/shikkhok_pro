@@ -1,0 +1,47 @@
+{
+  "school": {
+    "name": "Laboratory High School",
+    "font": {
+      "width": 500,
+      "family": "Arial"
+    },
+    "location": "Gazipur"
+  },
+  "questionType": "MCQ",
+  "note": "Never allow to scratch in question paper",
+  "questions": [
+    {
+      "type": "MCQ",
+      "id": 1,
+      "question": "The name of the capital of Bangladesh is -",
+      "options": ["Baghdad", "Delhi", "Dhaka", "Manila"]
+    },
+    {
+      "type": "MCQ",
+      "id": 2,
+      "question": "BRICS is a -",
+      "options": ["Club", "Country", "City", "Organization"]
+    },
+    {
+      "type": "MCQ",
+      "id": 3,
+      "question": "Why is Bangladesh known as a green country?",
+      "options": [
+        "The sky is green!",
+        "There are so many trees",
+        "Because of cows"
+      ]
+    },
+    {
+      "type": "MCQ",
+      "id": 4,
+      "question": "Bangladesh is -",
+      "statements": {
+        "i": "very ugly",
+        "ii": "very green",
+        "iii": "very pretty"
+      },
+      "options": ["i and ii", "i and iii", "ii and iii", "i, ii and iii"]
+    }
+  ]
+}

@@ -29,8 +29,12 @@ export default function TeacherDashboardShell({
       <aside className="col-span-1 space-y-4">
         {/* User greeting card */}
         <div className="rounded-2xl p-4 bg-card border border-white/5">
-          <h2 className="text-lg font-semibold mb-2">Hello, {user.displayName}</h2>
-          <p className="text-sm text-muted">Welcome to your teacher dashboard.</p>
+          <h2 className="text-lg font-semibold mb-2">
+            Hello, {user.displayName}
+          </h2>
+          <p className="text-sm text-muted">
+            Welcome to your teacher dashboard.
+          </p>
         </div>
 
         {/* Organizations card: shows orgs owned and member orgs */}

@@ -3,7 +3,11 @@ import QuestionCard from "@/components/question/QuestionCard";
 
 export default function MyQuestionsList({ questions }: any) {
   if (!questions || questions.length === 0) {
-    return <p className="text-sm text-[var(--text-muted)]">You haven't created any questions yet.</p>;
+    return (
+      <p className="text-sm text-[var(--text-muted)]">
+        You haven't created any questions yet.
+      </p>
+    );
   }
 
   return (

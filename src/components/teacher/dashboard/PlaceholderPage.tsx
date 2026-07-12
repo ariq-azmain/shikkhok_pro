@@ -1,6 +1,12 @@
 import React from "react";
 
-export default function PlaceholderPage({ title, description }: { title: string; description: string }) {
+export default function PlaceholderPage({
+  title,
+  description,
+}: {
+  title: string;
+  description: string;
+}) {
   return (
     <main className="min-h-screen flex items-center justify-center">
       <div className="text-center">

@@ -82,7 +82,7 @@ export function useAvatarUpload(): UseAvatarUploadReturn {
         setUploading(false);
       }
     },
-    []
+    [],
   );
 
   return { uploading, uploadError, uploadAvatar };

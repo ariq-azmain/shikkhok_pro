@@ -47,29 +47,40 @@ export function useProfile(): UseProfileReturn {
     fetchProfile();
   }, [fetchProfile]);
 
-  const update = useCallback(async (payload: ProfileUpdatePayload): Promise<boolean> => {
-    setSaving(true);
-    setSaveError(null);
-    try {
-      const res = await fetch("/api/profile/me", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-      const json = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(json.error ?? "Save failed");
-      // Merge only the returned fields
-      if (json.data) {
-        setProfile((prev) => (prev ? { ...prev, ...json.data } : prev));
+  const update = useCallback(
+    async (payload: ProfileUpdatePayload): Promise<boolean> => {
+      setSaving(true);
+      setSaveError(null);
+      try {
+        const res = await fetch("/api/profile/me", {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload),
+        });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(json.error ?? "Save failed");
+        // Merge only the returned fields
+        if (json.data) {
+          setProfile((prev) => (prev ? { ...prev, ...json.data } : prev));
+        }
+        return true;
+      } catch (err: unknown) {
+        setSaveError(err instanceof Error ? err.message : "Unknown error");
+        return false;
+      } finally {
+        setSaving(false);
       }
-      return true;
-    } catch (err: unknown) {
-      setSaveError(err instanceof Error ? err.message : "Unknown error");
-      return false;
-    } finally {
-      setSaving(false);
-    }
-  }, []);
+    },
+    [],
+  );
 
-  return { profile, loading, error, saving, saveError, update, refetch: fetchProfile };
+  return {
+    profile,
+    loading,
+    error,
+    saving,
+    saveError,
+    update,
+    refetch: fetchProfile,
+  };
 }

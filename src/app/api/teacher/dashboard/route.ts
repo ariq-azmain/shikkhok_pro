@@ -27,14 +27,20 @@ export async function GET() {
 
     if (userErr) {
       console.error("[GET /api/teacher/dashboard] user lookup error:", userErr);
-      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+      return NextResponse.json(
+        { error: "Internal server error" },
+        { status: 500 },
+      );
     }
     if (!dbUser) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
     if (dbUser.accountType !== "TEACHER") {
-      return NextResponse.json({ error: "Forbidden (not a teacher)" }, { status: 403 });
+      return NextResponse.json(
+        { error: "Forbidden (not a teacher)" },
+        { status: 403 },
+      );
     }
 
     const userId = dbUser.id;
@@ -47,28 +53,34 @@ export async function GET() {
     ] = await Promise.all([
       supabaseAdmin
         .from("org_members")
-        .select(`
+        .select(
+          `
           id, role, subjects, classes, joinedAt,
           org:organizations ( id, name, slug, logo, type )
-        `)
+        `,
+        )
         .eq("userId", userId),
       supabaseAdmin
         .from("questions")
-        .select(`
+        .select(
+          `
           id, title, subject, "className", difficulty, "likesCount", "commentsCount", "createdAt", content,
           org:organizations(id, name, slug)
-        `)
+        `,
+        )
         .eq("createdById", userId)
         .is("deletedAt", null)
         .order("createdAt", { ascending: false })
         .limit(MAX_QUESTIONS),
       supabaseAdmin
         .from("tasks")
-        .select(`
+        .select(
+          `
           id, title, description, status, assignDate, expireDate, updatedAt, createdAt,
           org:organizations(id, name),
           assignedBy:users!tasks_assignedById_fkey ( id, username, "displayName" )
-        `)
+        `,
+        )
         .eq("assignedToId", userId)
         .is("deletedAt", null)
         .order("createdAt", { ascending: false })
@@ -76,8 +88,15 @@ export async function GET() {
     ]);
 
     if (memErr || qErr || tasksErr) {
-      console.error("[GET /api/teacher/dashboard] data fetch error:", { memErr, qErr, tasksErr });
-      return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+      console.error("[GET /api/teacher/dashboard] data fetch error:", {
+        memErr,
+        qErr,
+        tasksErr,
+      });
+      return NextResponse.json(
+        { error: "Internal server error" },
+        { status: 500 },
+      );
     }
 
     const orgsMember = (memberships ?? []).map((m: any) => ({
@@ -93,7 +112,9 @@ export async function GET() {
     }));
 
     const orgsOwned = orgsMember.filter((o: any) => o.role === "ORG_PRINCIPAL");
-    const orgIds = Array.from(new Set(orgsMember.map((o: any) => o.id).filter(Boolean)));
+    const orgIds = Array.from(
+      new Set(orgsMember.map((o: any) => o.id).filter(Boolean)),
+    );
 
     // Group tasks
     const tasksByOrg: Record<string, any> = {};
@@ -109,29 +130,49 @@ export async function GET() {
     if (orgIds.length > 0) {
       const { data: noticesRows, error: noticesErr } = await supabaseAdmin
         .from("notices")
-        .select(`
+        .select(
+          `
           id, orgId, title, description, type, isPinned, createdAt,
           postedBy:users!notices_postedById_fkey ( id, username, "displayName" )
-        `)
+        `,
+        )
         .in("orgId", orgIds)
         .is("deletedAt", null)
         .order("createdAt", { ascending: false })
         .limit(MAX_NOTICES);
 
       if (noticesErr) {
-        console.error("[GET /api/teacher/dashboard] notices error:", noticesErr);
-        return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+        console.error(
+          "[GET /api/teacher/dashboard] notices error:",
+          noticesErr,
+        );
+        return NextResponse.json(
+          { error: "Internal server error" },
+          { status: 500 },
+        );
       }
       notices = noticesRows ?? [];
     }
 
     // Activity counts (use head:true to get counts without fetching rows)
-    const [{ count: commentsCount }, { count: likesCount }, { count: noticesPostedCount }] =
-      await Promise.all([
-        supabaseAdmin.from("comments").select("*", { count: "exact", head: true }).eq("userId", userId),
-        supabaseAdmin.from("likes").select("*", { count: "exact", head: true }).eq("userId", userId),
-        supabaseAdmin.from("notices").select("*", { count: "exact", head: true }).eq("postedById", userId),
-      ]);
+    const [
+      { count: commentsCount },
+      { count: likesCount },
+      { count: noticesPostedCount },
+    ] = await Promise.all([
+      supabaseAdmin
+        .from("comments")
+        .select("*", { count: "exact", head: true })
+        .eq("userId", userId),
+      supabaseAdmin
+        .from("likes")
+        .select("*", { count: "exact", head: true })
+        .eq("userId", userId),
+      supabaseAdmin
+        .from("notices")
+        .select("*", { count: "exact", head: true })
+        .eq("postedById", userId),
+    ]);
 
     const activity = {
       questionsCreated: (myQuestions ?? []).length,
@@ -141,9 +182,17 @@ export async function GET() {
     };
 
     // Build task status chart
-    const statusLabels = ["PENDING", "IN_PROGRESS", "SUBMITTED", "APPROVED", "REJECTED"];
+    const statusLabels = [
+      "PENDING",
+      "IN_PROGRESS",
+      "SUBMITTED",
+      "APPROVED",
+      "REJECTED",
+    ];
     const tasksAll = tasksRows ?? [];
-    const statusCounts = statusLabels.map((label) => tasksAll.filter((t) => t.status === label).length);
+    const statusCounts = statusLabels.map(
+      (label) => tasksAll.filter((t) => t.status === label).length,
+    );
 
     const stats = {
       tasksPending: statusCounts[0],
@@ -170,6 +219,9 @@ export async function GET() {
   } catch (err: any) {
     // Log full error details server-side but return generic message to client
     console.error("[GET /api/teacher/dashboard] Unexpected error:", err);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 },
+    );
   }
 }
