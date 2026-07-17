@@ -8,20 +8,7 @@ export interface DashboardActivity {
   tasksPreview: TaskPreview[];
   noticesPreview: NoticePreview[];
   stats: DashboardStats;
-}
-
-/**
- * Aggregation error that tracks which critical operations failed.
- * Allows graceful degradation while signaling data integrity issues.
- */
-export class AggregationError extends Error {
-  constructor(
-    message: string,
-    public failedOperations: string[] = []
-  ) {
-    super(message);
-    this.name = "AggregationError";
-  }
+  failedOperations: string[];
 }
 
 /**
@@ -29,9 +16,11 @@ export class AggregationError extends Error {
  * This function handles all database queries and calculations.
  * Should be called from Server Components or Server Actions only.
  *
- * @returns {Promise<DashboardActivity>} Activity data including tasks, notices, and stats
+ * Returns data with failedOperations array to indicate which fetches failed.
+ * Failed counts are marked with -1 (not 0) to distinguish errors from actual zero counts.
+ *
+ * @returns {Promise<DashboardActivity>} Activity data including tasks, notices, stats, and failed operations list
  * @throws {Error} If user is not authenticated or authorization fails
- * @throws {AggregationError} If critical database fetches fail (with list of failed operations)
  */
 export async function useActivity(): Promise<DashboardActivity> {
   // ============================================================
@@ -268,34 +257,7 @@ export async function useActivity(): Promise<DashboardActivity> {
   }
 
   // ============================================================
-  // 9. Check if critical errors exist and throw if needed
-  // ============================================================
-  if (failedOperations.length > 0) {
-    // Define which operations are "critical" — if all fail, throw
-    // For now, we'll throw if more than 3 operations failed
-    // or if key operations like task counts failed
-    const criticalOps = [
-      "tasks_preview",
-      "task_status_counts",
-      "total_tasks_count",
-      "questions_count",
-      "comments_count",
-      "likes_count",
-    ];
-    const criticalFailures = failedOperations.filter((op) =>
-      criticalOps.includes(op)
-    );
-
-    if (criticalFailures.length > 0) {
-      throw new AggregationError(
-        `Dashboard activity aggregation failed for critical operations: ${criticalFailures.join(", ")}`,
-        failedOperations
-      );
-    }
-  }
-
-  // ============================================================
-  // 10. Build stats object with error-aware defaults
+  // 9. Build stats object with error-aware defaults
   // ============================================================
   const stats: DashboardStats = {
     tasksCount: totalTasksErr ? -1 : totalTasksCount ?? 0,
@@ -313,5 +275,6 @@ export async function useActivity(): Promise<DashboardActivity> {
     tasksPreview,
     noticesPreview,
     stats,
+    failedOperations,
   };
 }
