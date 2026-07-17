@@ -4,7 +4,7 @@ import ActivityPieChart from "@/components/teacher/dashboard/ActivityPieChart";
 import { useActivity } from "@/hooks/useActivity.ts";
 export default function TopCharts() {
     // For overview we could accept props; for now charts render empty or demo data
-  const {stats} = useActivity()
+    const { stats } = useActivity();
     const labels = [
         "PENDING",
         "IN_PROGRESS",
@@ -14,10 +14,10 @@ export default function TopCharts() {
     ];
     const demoData = [5, 2, 1, 8, 0];
     const activity = {
-        questionsCreated: stats.activityCounts.questionsCreated,
-        commentsMade: stats.activityCounts.commentsMade,
-        likesMade: stats.activityCounts.likesMade,
-        noticesPosted: stats.activityCounts.noticesPosted
+        questionsCreated: stats?.activityCounts?.questionsCreated,
+        commentsMade: stats?.activityCounts?.commentsMade,
+        likesMade: stats?.activityCounts?.likesMade,
+        noticesPosted: stats?.activityCounts?.noticesPosted
     };
 
     return (
