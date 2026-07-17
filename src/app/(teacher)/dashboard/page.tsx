@@ -1,115 +1,82 @@
 import { auth } from "@clerk/nextjs/server";
 import type { Metadata } from "next";
-import DashboardShell from "@/components/teacher/dashboard/DashboardShell";
-import { createClient } from "@/lib/supabase/server";
+import { useActivity } from "@/hooks/useActivity";
+import SectionCard from "@/components/teacher/dashboard/SectionCard";
+import TopCharts from "@/components/teacher/dashboard/TopCharts";
 
 export const metadata: Metadata = {
-    title: "Teacher Dashboard — Shikkhok Pro"
+  title: "Teacher Dashboard — Shikkhok Pro",
 };
 
 export default async function Page() {
-    const { userId: clerkId } = await auth();
-    if (!clerkId) {
-        return (
-            <main className="min-h-screen flex items-center justify-center">
-                <p className="text-sm text-[var(--text-muted)]">
-                    Please sign in to view the dashboard.
-                </p>
-            </main>
-        );
-    }
-
-    const supabase = await createClient();
-
-    // Resolve project user by clerkId (include username + avatar)
-    const { data: dbUser, error: userErr } = await supabase
-        .from("users")
-        .select("id, username, displayName, avatar, accountType")
-        .eq("clerkId", clerkId)
-        .maybeSingle();
-
-    if (userErr || !dbUser) {
-        console.error("[TeacherDashboard v2] user lookup error:", userErr);
-        return (
-            <main className="min-h-screen flex items-center justify-center">
-                <p className="text-sm text-[var(--text-muted)]">
-                    Failed to load user profile.
-                </p>
-            </main>
-        );
-    }
-
-    if (dbUser.accountType !== "TEACHER") {
-        return (
-            <main className="min-h-screen flex items-center justify-center">
-                <p className="text-sm text-[var(--text-muted)]">
-                    Access denied. Teacher account required.
-                </p>
-            </main>
-        );
-    }
-
-    const userId = dbUser.id;
-
-    // Fetch overview data: recent tasks & notices + counts for quick summaries
-    const [tasksPreviewRes, noticesPreviewRes, tasksCountRes, noticesCountRes] =
-        await Promise.all([
-            supabase
-                .from("tasks")
-                .select(
-                    `id, title, status, assignDate, expireDate, org:organizations(id, name)`
-                )
-                .eq("assignedToId", userId)
-                .is("deletedAt", null)
-                .order("createdAt", { ascending: false })
-                .limit(4),
-            supabase
-                .from("notices")
-                .select(
-                    `id, title, type, isPinned, createdAt, org:organizations(id, name)`
-                )
-                .in(
-                    "orgId",
-                    (
-                        await supabase
-                            .from("org_members")
-                            .select("orgId")
-                            .eq("userId", userId)
-                    ).data?.map((r: any) => r.orgId) ?? []
-                )
-                .is("deletedAt", null)
-                .order("createdAt", { ascending: false })
-                .limit(4),
-            supabase
-                .from("tasks")
-                .select("id", { count: "exact", head: true })
-                .eq("assignedToId", userId),
-            supabase
-                .from("notices")
-                .select("id", { count: "exact", head: true })
-                .in(
-                    "orgId",
-                    (
-                        await supabase
-                            .from("org_members")
-                            .select("orgId")
-                            .eq("userId", userId)
-                    ).data?.map((r: any) => r.orgId) ?? []
-                )
-        ]);
-
-    const tasksPreview = tasksPreviewRes.data ?? [];
-    const noticesPreview = noticesPreviewRes.data ?? [];
-    const tasksCount = tasksCountRes.count ?? 0;
-    const noticesCount = noticesCountRes.count ?? 0;
-
+  const { userId: clerkId } = await auth();
+  if (!clerkId) {
     return (
-        <DashboardShell
-            user={dbUser}
-            tasksPreview={tasksPreview}
-            noticesPreview={noticesPreview}
-            tasksCount={tasksCount}
-            noticesCount={noticesCount}
-        />
+      <main className="min-h-screen flex items-center justify-center">
+        <p className="text-sm text-[var(--text-muted)]">
+          Please sign in to view the dashboard.
+        </p>
+      </main>
     );
+  }
+
+  let activity;
+  try {
+    activity = await useActivity();
+  } catch (error) {
+    console.error("[TeacherDashboard] useActivity error:", error);
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <p className="text-sm text-[var(--text-muted)]">
+          {error instanceof Error ? error.message : "Failed to load dashboard data."}
+        </p>
+      </main>
+    );
+  }
+
+  const { tasksPreview, noticesPreview, stats, failedOperations } = activity;
+
+  // Log failed operations for debugging
+  if (failedOperations.length > 0) {
+    console.warn("[TeacherDashboard] Failed operations:", failedOperations);
+  }
+
+  return (
+    <main className="min-h-screen bg-[var(--bg-primary)] p-6">
+      <div className="max-w-7xl mx-auto space-y-8">
+        {/* Header */}
+        <div>
+          <h1 className="text-3xl font-bold text-[var(--text-primary)]">
+            Teacher Dashboard
+          </h1>
+          <p className="text-sm text-[var(--text-muted)] mt-1">
+            Overview of your tasks, notices, and activity
+          </p>
+        </div>
+
+        {/* Charts Section */}
+        <TopCharts activity={activity} />
+
+        {/* Cards Section */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <SectionCard
+            title="Recent Tasks"
+            count={stats.tasksCount}
+            href="/tasks"
+            items={tasksPreview}
+            type="tasks"
+            isLoading={false}
+          />
+          <SectionCard
+            title="Recent Notices"
+            count={stats.noticesCount}
+            href="/notices"
+            items={noticesPreview}
+            type="notices"
+            isLoading={false}
+          />
+        </div>
+      </div>
+    </main>
+  );
 }
