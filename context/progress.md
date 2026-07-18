@@ -16,6 +16,11 @@
 ## Phase 2 — Core Question Features (সপ্তাহ ৩-৪)
 
 - [x] Teacher Dashboard
+- [ ] Organization তৈরি (TEACHER → becomes ORG_PRINCIPAL)
+- [ ] Teacher add/assign system (subject + class)
+- [ ] Notification system (push)
+
+## Phase 3 — Social Features (সপ্তাহ ৫-৬)
 - [ ] Question Editor (TipTap + shapes + icons)
 - [ ] Question Bank CRUD (org only)
 - [ ] AI প্রশ্ন জেনারেটর (step-by-step wizard)
@@ -23,13 +28,7 @@
 - [ ] Syllabus / Book file upload to AI
 - [ ] AI inline suggestions in editor
 - [ ] Question export (PDF/DOCX/PNG/MD)
-
-## Phase 3 — Social Features (সপ্তাহ ৫-৬)
-
-- [ ] Organization তৈরি (TEACHER → becomes ORG_PRINCIPAL)
-- [ ] Teacher add/assign system (subject + class)
 - [ ] Visibility control (PUBLIC/SCHOOL/PRIVATE)
-- [ ] Notification system (push)
 
 ## Phase 4 — Organization Tools (সপ্তাহ ৭-৮)
 
