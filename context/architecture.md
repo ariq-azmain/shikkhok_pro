@@ -1,128 +1,100 @@
-# 📚 Shikkhok Pro — সম্পূর্ণ প্রজেক্ট আর্কিটেকচার প্ল্যান
-
-> বাংলাদেশের শিক্ষক ও ছাত্রদের জন্য AI-চালিত প্রশ্নপত্র সোশ্যাল প্ল্যাটফর্ম
-
----
-
-## 1. 🧭 প্রজেক্ট ওভারভিউ
-
-| বিষয়        | বিবরণ                                                                      |
-| ------------ | -------------------------------------------------------------------------- |
-| প্রজেক্ট নাম | Shikkhok Pro (শিক্ষক প্রো)                                                 |
-| টার্গেট      | বাংলাদেশের স্কুল, কলেজ, শিক্ষক, ছাত্র ও অভিভাবক                            |
-| কারিকুলাম    | NCTB — Class 1–10, SSC, HSC                                                |
-| ভাষা         | English (UI), Bangla (Content)                                             |
-| মূল ফিচার    | AI দিয়ে প্রশ্নপত্র তৈরি + সোশ্যাল মিডিয়া ফিড + Organization ম্যানেজমেন্ট |
-
----
-
-## 2. 🛠️ টেক স্ট্যাক (Recommended)
-
+# 📚 Shikkhok Pro — Complete Project Architecture Plan
+> AI-powered question paper social platform for teachers and students in Bangladesh
+> 
+## 1. 🧭 Project Overview
+| Topic | Description |
+|---|---|
+| Project Name | Shikkhok Pro (শিক্ষক প্রো) |
+| Target Audience | Schools, colleges, teachers, students, and parents in Bangladesh |
+| Curriculum | NCTB — Class 1–10, SSC, HSC |
+| Language | English (UI), Bangla (Content) |
+| Core Features | AI-powered question generation + Social media feed + Organization management |
+## 2. 🛠️ Tech Stack (Recommended)
 ### Frontend
-
 ```text
 Framework     : Next.js 14+ (App Router)
 Styling       : Tailwind CSS
 State Mgmt    : Zustand / React Query (TanStack)
 Forms         : React Hook Form + Zod
-Rich Text     : TipTap Editor (Question Editor এর জন্য)
+Rich Text     : TipTap Editor (For Question Editor)
 Realtime Chat : StreamChat (pre-built messaging solution)
 PDF Export    : react-pdf / puppeteer
+
 ```
-
 ### Backend
-
 ```text
 Runtime       : Next.js API Routes
 Database      : PostgreSQL (Supabase)
-File Storage  : Cloudinary / AWS S3 (ছবি, সিলেবাস, বই আপলোড)
+File Storage  : Cloudinary / AWS S3 (For uploading images, syllabi, books)
 Cache         : Redis (Upstash)
 Queue         : BullMQ (PDF generation, AI queue)
-Search        : Meilisearch / Algolia (প্রশ্ন সার্চ)
+Search        : Meilisearch / Algolia (Question search)
 Notifications : Web Push / FCM (task notification)
+
 ```
-
 ### Auth
-
 ```text
 Provider      : Clerk
 Login Methods : Google, GitHub, Facebook, email (Social Login)
-Account Types : TEACHER | STUDENT | PARENT (signup এ select করবে)
+Account Types : TEACHER | STUDENT | PARENT (selected during signup)
+
 ```
-
 ### AI
-
 ```text
 Primary       : Groq
 Fallback      : Gemini
-Use Cases     : প্রশ্ন জেনারেট, কাস্টম প্রমট, সিলেবাস ম্যাচিং, inline suggestions
+Use Cases     : Question generation, custom prompts, syllabus matching, inline suggestions
 Book Sources  : Bangladesh NCTB Board Books (Class 1–10, SSC, HSC)
-Upload Support: PDF, DOCX/DOC, PNG/JPG/JPEG এবং অন্যান্য relevant formats
-```
+Upload Support: PDF, DOCX/DOC, PNG/JPG/JPEG, and other relevant formats
 
+```
 ### Messaging
-
 ```text
-Provider      : StreamChat (pre-built solution — scratch থেকে নয়)
-Features      : 1-on-1 DM, Group Chat (org-level), file/image/question share
+Provider      : StreamChat (pre-built solution — not from scratch)
+Features      : 1-on-1 DM, Group Chat (org-level), file/image/question sharing
+
 ```
-
 ### DevOps
-
 ```text
 Hosting       : Vercel (Frontend + API)
 DB Hosting    : PostgreSQL / Supabase
 Monitoring    : Sentry + Vercel Analytics
 CI/CD         : GitHub Actions
+
 ```
-
----
-
-## 3. 👥 ইউজার রোলস (User Roles)
-
+## 3. 👥 User Roles
 ```text
 ── Global Roles ──
-SUPER_ADMIN      → প্ল্যাটফর্ম মালিক (Shikkhok Pro টিম)
-TEACHER          → শিক্ষক (প্রশ্ন বানায়, org তৈরি করতে পারে)
-STUDENT          → ছাত্র (পাবলিক প্রশ্ন দেখে ও engage করে)
-PARENT           → অভিভাবক (পাবলিক প্রশ্ন দেখে ও engage করে)
+SUPER_ADMIN      → Platform Owner (Shikkhok Pro Team)
+TEACHER          → Teacher (Creates questions, can create orgs)
+STUDENT          → Student (Views public questions & engages)
+PARENT           → Parent (Views public questions & engages)
 
-── Organization Roles (একজন TEACHER এর org এর মধ্যে) ──
-ORG_PRINCIPAL    → Organization তৈরিকারী — সর্বোচ্চ ক্ষমতা
-ORG_ADMIN        → Principal কর্তৃক নিযুক্ত — পরিচালনার ক্ষমতা
-ORG_TEACHER      → Organization এর সদস্য শিক্ষক
+── Organization Roles (Inside a TEACHER's org) ──
+ORG_PRINCIPAL    → Organization Creator — Highest authority
+ORG_ADMIN        → Appointed by Principal — Management authority
+ORG_TEACHER      → Member Teacher of the Organization
+
 ```
-
-### রোল পারমিশন ম্যাট্রিক্স
-
-| পারমিশন                | SUPER | ORG_PRINCIPAL | ORG_ADMIN |   TEACHER    | STUDENT |
-| ---------------------- | :---: | :-----------: | :-------: | :----------: | :-----: |
-| প্রশ্ন জেনারেট করা     |  ✅   |      ✅       |    ✅     |      ✅      |   ❌    |
-| Question Bank বানানো   |  ✅   |      ✅       |   ✅\*    |      ❌      |   ❌    |
-| Teacher যোগ/বাদ দেওয়া |  ✅   |      ✅       |    ✅     |      ❌      |   ❌    |
-| Task অ্যাসাইন করা      |  ✅   |      ✅       |    ✅     |      ❌      |   ❌    |
-| Notice পোস্ট করা       |  ✅   |      ✅       |    ✅     |      ❌      |   ❌    |
-| Public প্রশ্ন দেখা     |  ✅   |      ✅       |    ✅     |      ✅      |   ✅    |
-| School প্রশ্ন দেখা     |  ✅   |      ✅       |    ✅     |      ✅      |   ❌    |
-| Private প্রশ্ন দেখা    |  ✅   |      ✅       |    ✅     | শুধু নিজেরটা |   ❌    |
-| Like/Comment/Share     |  ✅   |      ✅       |    ✅     |      ✅      |   ✅    |
-
-\*ORG_PRINCIPAL অনুমতি দিলে
-
-> **নোট:** PARENT অ্যাকাউন্ট STUDENT এর মতোই — শুধু Public প্রশ্ন browse ও like/comment/share করতে পারবে।
-
----
-
-## 4. 🗄️ ডেটাবেস স্কিমা (Prisma Schema)
-
+### Role Permission Matrix
+| Permission | SUPER | ORG_PRINCIPAL | ORG_ADMIN | TEACHER | STUDENT |
+|---|---|---|---|---|---|
+| Generate Questions | ✅ | ✅ | ✅ | ✅ | ❌ |
+| Create Question Bank | ✅ | ✅ | ✅* | ❌ | ❌ |
+| Add/Remove Teacher | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Assign Tasks | ✅ | ✅ | ✅ | ❌ | ❌ |
+| Post Notices | ✅ | ✅ | ✅ | ❌ | ❌ |
+| View Public Questions | ✅ | ✅ | ✅ | ✅ | ✅ |
+| View School Questions | ✅ | ✅ | ✅ | ✅ | ❌ |
+| View Private Questions | ✅ | ✅ | ✅ | Only Own | ❌ |
+| Like/Comment/Share | ✅ | ✅ | ✅ | ✅ | ✅ |
+*If permitted by ORG_PRINCIPAL
+> **Note:** PARENT accounts function similarly to STUDENT accounts — they can only browse and like/comment/share public questions.
+> 
+## 4. 🗄️ Database Schema (Prisma Schema)
 ### Core Models
-
 @./schema.prisma
-
----
-
-## 5. 📁 ফোল্ডার স্ট্রাকচার (Next.js App Router)
-
+## 5. 📁 Folder Structure (Next.js App Router)
 ```text
 Shikkhok Pro/
 ├── app/
@@ -133,61 +105,61 @@ Shikkhok Pro/
 │   │
 │   ├── (main)/                         # Main app (logged in)
 │   │   ├── layout.tsx                  # Main layout with sidebar
-│   │   ├── feed/                       # সোশ্যাল ফিড (হোম)
-│   │   ├── explore/                    # পাবলিক প্রশ্ন browse
-│   │   ├── profile/[username]/         # ইউজার প্রোফাইল
-│   │   ├── question/[id]/              # একটি প্রশ্নের পেজ
+│   │   ├── feed/                       # Social feed (Home)
+│   │   ├── explore/                    # Browse public questions
+│   │   ├── profile/[username]/         # User profile
+│   │   ├── question/[id]/              # Single question page
 │   │   └── messages/                   # StreamChat messaging
 │   │
 │   ├── (teacher)/                      # Teacher-only features
 │   │   ├── dashboard/                  # Teacher dashboard
-│   │   ├── my-questions/              # আমার তৈরি সব প্রশ্ন
+│   │   ├── my-questions/              # My generated questions
 │   │   ├── create/
-│   │   │   ├── ai/                    # AI দিয়ে প্রশ্ন তৈরি
-│   │   │   └── editor/                # Question Editor দিয়ে তৈরি
+│   │   │   ├── ai/                    # Create questions with AI
+│   │   │   └── editor/                # Create with Question Editor
 │   │   └── org/
-│   │       ├── create/                # নতুন Organization তৈরি
+│   │       ├── create/                # Create new Organization
 │   │       └── [slug]/
 │   │           ├── dashboard/         # Org overview
-│   │           ├── teachers/          # Teacher ম্যানেজমেন্ট
-│   │           ├── banks/             # Question Bank লিস্ট
+│   │           ├── teachers/          # Teacher management
+│   │           ├── banks/             # Question Bank list
 │   │           │   ├── create/
 │   │           │   └── [bankId]/
-│   │           │       └── generate/  # AI প্রশ্ন জেনারেট (org context)
-│   │           ├── tasks/             # টাস্ক ম্যানেজার
-│   │           ├── notices/           # নোটিশ বোর্ড
-│   │           └── settings/          # Org সেটিংস
+│   │           │       └── generate/  # AI question generation (org context)
+│   │           ├── tasks/             # Task manager
+│   │           ├── notices/           # Notice board
+│   │           └── settings/          # Org settings
 │   │
 │   ├── api/
 │   │   ├── auth/                      # Clerk webhooks
-│   │   ├── questions/                 # প্রশ্ন CRUD
-│   │   ├── ai/generate/               # AI প্রশ্ন জেনারেশন
+│   │   ├── questions/                 # Question CRUD
+│   │   ├── ai/generate/               # AI question generation
 │   │   ├── ai/suggestions/            # Inline AI suggestions (editor)
 │   │   ├── ai/pdf/                    # PDF export queue
 │   │   ├── organizations/             # Org CRUD
 │   │   ├── banks/                     # Question Bank CRUD
 │   │   ├── social/                    # Like/Comment/Share
-│   │   ├── tasks/                     # টাস্ক CRUD
-│   │   ├── notices/                   # নোটিশ CRUD
+│   │   ├── tasks/                     # Task CRUD
+│   │   ├── notices/                   # Notice CRUD
 │   │   └── notifications/             # Push notification
 │   │
-│   └── (public)/                      # লগইন ছাড়া দেখা যাবে
-│       ├── page.tsx                   # ল্যান্ডিং পেজ
-│       └── q/[id]/                    # Public প্রশ্ন শেয়ার লিঙ্ক
+│   └── (public)/                      # Visible without login
+│       ├── page.tsx                   # Landing page
+│       └── q/[id]/                    # Public question share link
 │
 ├── components/
 │   ├── ui/                            # shadcn base components
 │   ├── question/
-│   │   ├── ../src/components/question/QuestionCard.tsx           # ফিডে প্রশ্নের কার্ড
-│   │   ├── QuestionDetail.tsx         # পুরো প্রশ্ন দেখা
-│   │   ├── QuestionActions.tsx        # Like/Share/Comment বার
-│   │   ├── QuestionPaper.tsx          # Print ভিউ
+│   │   ├── QuestionCard.tsx           # Question card in feed
+│   │   ├── QuestionDetail.tsx         # Full question view
+│   │   ├── QuestionActions.tsx        # Like/Share/Comment bar
+│   │   ├── QuestionPaper.tsx          # Print view
 │   │   └── VisibilityBadge.tsx        # PUBLIC/SCHOOL/PRIVATE badge
 │   ├── editor/
 │   │   ├── QuestionEditor.tsx         # TipTap based rich editor
 │   │   ├── EditorToolbar.tsx          # Formatting toolbar
 │   │   ├── ShapeDrawer.tsx            # Shape drawing panel
-│   │   ├── IconPicker.tsx             # Platform icons insert
+│   │   ├── IconPicker.tsx             # Insert platform icons
 │   │   ├── LayoutTemplates.tsx        # Pre-defined question layouts
 │   │   └── ComponentLibrary.tsx       # MCQ/CQ pre-built components
 │   ├── ai-generator/
@@ -231,18 +203,14 @@ Shikkhok Pro/
     ├── useOrganization.ts
     ├── useTask.ts
     └── useNotification.ts
+
 ```
-
----
-
-## 6. 🤖 AI প্রশ্ন জেনারেশন সিস্টেম
-
-### দুটি পথ
-
+## 6. 🤖 AI Question Generation System
+### Two Paths
 ```text
 Path 1 — AI Generation:
   ┌─────────────────────────────────────────┐
-  │  Teacher → Subject + Class নির্বাচন        │
+  │  Teacher → Selects Subject + Class      │
   │  → Difficulty (Easy/Normal/Hard)        │
   │  → Syllabus Input:                      │
   │      ├── File Upload (PDF/DOCX/IMG)     │
@@ -260,33 +228,30 @@ Path 2 — Question Editor (Manual):
   ┌─────────────────────────────────────────┐
   │  Teacher → Opens Question Editor        │
   │  → Side panel: Book viewer (copy text)  │
-  │  → Side panel: Book viewer (copy text)  │
   │  → Rich text editing with toolbar       │
   │  → AI inline suggestions (on cursor)    │
   │  → Pre-built layouts / components       │
   │  → Set Visibility → Save/Export         │
   └─────────────────────────────────────────┘
+
 ```
-
-### AI ইনপুট প্যারামিটার
-
+### AI Input Parameters
 ```javascript
 interface QuestionGenerationInput {
-  subject: string;          // বাংলা | ইংরেজি | গণিত | বিজ্ঞান...
-  className: string;        // Class-1 → HSC
+  subject: string;          // Bangla | English | Math | Science...
+  className: string;        // Class 1 → HSC
   difficulty: 'EASY' | 'NORMAL' | 'HARD';
   chapters?: string[];
   topics?: string[];
   syllabusFile?: File;      // PDF/DOCX/JPG
-  customBook?: File;        // custom book upload
-  useNCTB: boolean;         // NCTB board book use করবে কিনা
+  customBook?: File;        // Custom book upload
+  useNCTB: boolean;         // Whether to use NCTB board books
   customPrompt?: string;
-  bankId?: string;          // কোন Question Bank এ রাখবে
+  bankId?: string;          // Which Question Bank to store it in
 }
+
 ```
-
-### Question Editor ফিচার সমূহ
-
+### Question Editor Features
 ```text
 Text Formatting:
   ├── Heading (h1–h6)
@@ -313,236 +278,190 @@ Special:
 
 Export Formats:
   PDF | DOCX/DOC | PNG/JPG
+
 ```
-
-### AI আউটপুট ফরম্যাট
-
+### AI Output Format
 ```text
 Output: Markdown (MD)
   → Teacher previews MD rendered in platform
   → AI generated question is editable in Question Editor
   → After edit, same export options available
+
 ```
-
----
-
-## 7. 🔒 ভিজিবিলিটি ও অ্যাক্সেস কন্ট্রোল
-
+## 7. 🔒 Visibility & Access Control
 ```text
-প্রশ্ন PUBLIC হলে:
-  → যে কেউ দেখতে পারবে (STUDENT, PARENT, TEACHER)
-  → ফিডে দেখাবে
-  → Share link সবার জন্য কাজ করবে
+If question is PUBLIC:
+  → Anyone can view it (STUDENT, PARENT, TEACHER)
+  → Visible in the feed
+  → Share link works for everyone
 
-প্রশ্ন SCHOOL হলে:
-  → শুধু একই Organization এর সদস্যরা দেখতে পারবে
-  → Share link শুধু Org members এর জন্য কাজ করবে
-  → অন্যরা 401 পাবে
+If question is SCHOOL:
+  → Only members of the same Organization can view it
+  → Share link works only for Org members
+  → Others will receive a 401 error
 
-প্রশ্ন PRIVATE হলে:
-  → শুধু question creator নিজে দেখতে পারবে
-  → Share link কাজ করবে না
-  → ORG_PRINCIPAL ও ORG_ADMIN দেখতে পারবে (org context এ)
+If question is PRIVATE:
+  → Only the question creator can view it
+  → Share link will not work
+  → ORG_PRINCIPAL and ORG_ADMIN can view it (within the org context)
 
-Default (নতুন তৈরি হলে):
-  → PRIVATE (teacher পরে বদলাতে পারবে)
+Default (when newly created):
+  → PRIVATE (teacher can change it later)
+
 ```
-
----
-
-## 8. 📱 পেজ ও ফিচার ব্রেকডাউন
-
-### 🏠 পাবলিক ল্যান্ডিং পেজ
-
-- প্ল্যাটফর্মের পরিচয়
-- পাবলিক প্রশ্নের স্যাম্পল
-- Login / Sign Up CTA
-
-### 📰 ফিড (হোম — TEACHER, STUDENT, PARENT)
-
-- Public প্রশ্নের infinite scroll ফিড
-- Filter: বিষয়, ক্লাস, কঠিনতা
-- Like, Comment, Share
-- Browse questions
-
-### 🔍 এক্সপ্লোর
-
-- Search প্রশ্ন
-- Tag, বিষয়, ক্লাস দিয়ে Filter
-- Trending প্রশ্নপত্র
-
-### 🏫 অর্গানাইজেশন (ORG_PRINCIPAL View)
-
+## 8. 📱 Page & Feature Breakdown
+### 🏠 Public Landing Page
+ * Platform introduction
+ * Samples of public questions
+ * Login / Sign Up CTA
+### 📰 Feed (Home — TEACHER, STUDENT, PARENT)
+ * Infinite scroll feed of Public questions
+ * Filters: Subject, Class, Difficulty
+ * Like, Comment, Share
+ * Browse questions
+### 🔍 Explore
+ * Search questions
+ * Filter by tags, subject, and class
+ * Trending question papers
+### 🏫 Organization (ORG_PRINCIPAL View)
 ```text
-├── Overview        → সংক্ষিপ্ত পরিসংখ্যান
-├── Teachers        → Teacher যোগ / বাদ / role পরিবর্তন
-│                     (subject ও class assignment সহ)
-├── Question Banks  → তৈরি করা Bank লিস্ট ও manage
-├── Tasks           → Task দেওয়া ও track করা
-├── Notices         → Notice পোস্ট করা (CRUD)
-├── Messages        → Org group chat ও DM
-└── Settings        → Org সেটিংস
-```
+├── Overview        → Summary statistics
+├── Teachers        → Add / Remove / Change teacher roles
+│                     (including subject and class assignment)
+├── Question Banks  → List and manage created Banks
+├── Tasks           → Assign and track tasks
+├── Notices         → Post notices (CRUD)
+├── Messages        → Org group chat and DMs
+└── Settings        → Org settings
 
+```
 ### 👩‍🏫 Teacher Dashboard
-
 ```text
-├── My Questions    → আমার তৈরি সব প্রশ্ন
-├── Create with AI  → AI দিয়ে প্রশ্ন তৈরি (wizard)
-├── Question Editor → হাতে প্রশ্ন তৈরি (rich editor)
-├── My Tasks        → assigned task দেখা ও submit করা
-├── Notice Board    → org এর notice দেখা
-└── Messages        → org members এর সাথে chat
+├── My Questions    → All questions created by me
+├── Create with AI  → Create questions via AI (wizard)
+├── Question Editor → Create questions manually (rich editor)
+├── My Tasks        → View and submit assigned tasks
+├── Notice Board    → View organization notices
+└── Messages        → Chat with org members
+
 ```
-
-### ✍️ AI প্রশ্ন জেনারেটর (Step-by-step Wizard)
-
+### ✍️ AI Question Generator (Step-by-step Wizard)
 ```text
-Step 1: বিষয় ও ক্লাস নির্বাচন
-Step 2: কঠিনতা (Easy / Normal / Hard) নির্বাচন
-Step 3: সিলেবাস ইনপুট:
+Step 1: Select Subject and Class
+Step 2: Select Difficulty (Easy / Normal / Hard)
+Step 3: Syllabus Input:
           ├── File upload (PDF/DOCX/IMG)
-          ├── Chapter/Topic manually
+          ├── Enter Chapter/Topic manually
           └── Custom Prompt
 Step 4: Book Source:
           ├── NCTB Board Books (built-in)
           └── Custom Book upload
 Step 5: AI Generation → MD Preview
 Step 6: Edit in Question Editor (optional)
-Step 7: Visibility set (Public/School/Private)
-Step 8: Export (PDF / DOCX / PNG ) বা Save
+Step 7: Set Visibility (Public/School/Private)
+Step 8: Export (PDF / DOCX / PNG) or Save
+
 ```
-
-### 📋 টাস্ক ম্যানেজার
-
+### 📋 Task Manager
 ```text
-PRINCIPAL / ADMIN করে:
-  → Task তৈরি (Title, Description, Assigned Teacher, Expire Date)
+PRINCIPAL / ADMIN Actions:
+  → Create Task (Title, Description, Assigned Teacher, Expiry Date)
   → Task CRUD
-  → Submitted task review → Approve (with message) / Reject (with feedback)
-  → Re-assign rejected task
+  → Review submitted tasks → Approve (with message) / Reject (with feedback)
+  → Re-assign rejected tasks
 
-TEACHER করে:
-  → Assigned task দেখে
-  → Question তৈরি করে task submit করে
-  → Feedback/Approve message দেখে
+TEACHER Actions:
+  → View assigned tasks
+  │ Create questions and submit the task
+  → View feedback/approval messages
 
 Task Status Flow:
   PENDING → IN_PROGRESS → SUBMITTED → APPROVED / REJECTED → (re-assign)
 
-সব Org member সব task দেখতে পারবে।
-Task notification: mobile push / desktop notification।
+All Org members can view all tasks.
+Task notifications: mobile push / desktop notifications.
+
 ```
-
-### 📢 নোটিশ বোর্ড
-
-- ADMIN / PRINCIPAL notice তৈরি ও CRUD করবে
-- সব Org member notice দেখতে পারবে
-- Notice fields: createDate (auto), Title, Description, Type (EVENTS/URGENT/GENERAL/EXAM/HOLIDAY/OTHER)
-- Important notice pin করা
-- Notice এ notification
-
-### 💬 মেসেজিং (StreamChat)
-
+### 📢 Notice Board
+ * ADMIN / PRINCIPAL creates and handles CRUD operations for notices
+ * All Org members can view notices
+ * Notice fields: createDate (auto), Title, Description, Type (EVENTS/URGENT/GENERAL/EXAM/HOLIDAY/OTHER)
+ * Pin important notices
+ * Notifications on new notices
+### 💬 Messaging (StreamChat)
 ```text
 Features:
-  ├── 1-on-1 DM (org members এর মধ্যে)
-  ├── Org Group Channel (সব members একসাথে)
-  ├── File / Image / Question শেয়ার
-  ├── ADMIN/PRINCIPAL badge (avatar এর উপরে)
-  └── PRINCIPAL/ADMIN group এ member এর message on/off control
+  ├── 1-on-1 DM (between org members)
+  ├── Org Group Channel (all members together)
+  ├── File / Image / Question sharing
+  ├── ADMIN/PRINCIPAL badge (above avatar)
+  └── PRINCIPAL/ADMIN control over member messaging (on/off) in the group
 
 Member List:
-  → সব org members দেখা যাবে
-  → ADMIN label ও PRINCIPAL label visible
+  → View all org members
+  → ADMIN label and PRINCIPAL label visible
 
 Privacy:
-  → শুধু একই Org এর members chat করতে পারবে
+  → Only members of the same Org can chat with each other
+
 ```
-
----
-
-## 9. 🎨 UI/UX গাইডলাইন
-
-### ডিজাইন থিম
-
+## 9. 🎨 UI/UX Guidelines
+### Design Theme
 ```text
-Primary Color  : #1E40AF (Deep Blue — শিক্ষার রং)
-Secondary      : #059669 (Green — বাংলাদেশের সবুজ)
+Primary Color  : #1E40AF (Deep Blue — The color of education)
+Secondary      : #059669 (Green — The green of Bangladesh)
 Accent         : #F59E0B (Amber)
 Background     : #F8FAFC (Light) / #0F172A (Dark)
 Font           : Plus Jakarta Sans (English) + Kalpurush / Hind Siliguri (Bangla)
-```
 
+```
 ### Bangla Text
-
-```text
-- Bangla letters অবশ্যই stable থাকতে হবে, কোনো breakage নেই
-- Question Editor এ Bangla font পরিবর্তনের option থাকবে
-- Platform এ Bangla font selector built-in
-```
-
-### রেসপনসিভ
-
-- Mobile First (বাংলাদেশে mobile ব্যবহার বেশি)
-- PWA সাপোর্ট
-- Question Editor real-time (collaborative ready)
-
----
-
-## 10. 🚀 ডেভেলপমেন্ট ফেজ
-
-### Phase 1 — Foundation (সপ্তাহ ১-২)
-
-- [ ] Next.js প্রজেক্ট সেটআপ
-- [ ] Clerk Auth ইন্টিগ্রেশন (Google/GitHub/Facebook)
-- [ ] Onboarding: Account type select (TEACHER/STUDENT/PARENT)
-- [ ] Prisma + PostgreSQL সেটআপ
-- [ ] User Profile পেজ
-- [ ] Organization তৈরি (TEACHER → becomes ORG_PRINCIPAL)
-- [ ] Teacher add/assign system (subject + class)
-
-### Phase 2 — Core Question Features (সপ্তাহ ৩-৪)
-
-- [ ] Question Bank CRUD (org only)
-- [ ] AI প্রশ্ন জেনারেটর (step-by-step wizard)
-- [ ] NCTB Curriculum data integration
-- [ ] Syllabus / Book file upload to AI
-- [ ] Question Editor (TipTap + shapes + icons)
-- [ ] AI inline suggestions in editor
-- [ ] Question export (PDF/DOCX/PNG/MD)
-- [ ] Visibility control (PUBLIC/SCHOOL/PRIVATE)
-
-### Phase 3 — Social Features (সপ্তাহ ৫-৬)
-
-- [ ] Public Feed (infinite scroll)
-- [ ] Like / Comment / Share
-- [ ] Explore পেজ + Search
-- [ ] Notification system (push)
-- [ ] STUDENT / PARENT browse flow
-
-### Phase 4 — Organization Tools (সপ্তাহ ৭-৮)
-
-- [ ] Task Management System (CRUD, submit, review, re-assign)
-- [ ] Task Notifications (mobile/desktop push)
-- [ ] Notice Board (CRUD, pin, types)
-- [ ] StreamChat integration (DM + group channel)
-- [ ] ADMIN/PRINCIPAL badges in chat
-- [ ] Group message permission control (PRINCIPAL/ADMIN)
-
-### Phase 5 — Polish & Launch (সপ্তাহ ৯-১০)
-
-- [ ] Bangla font stability audit
-- [ ] Mobile responsive QA
-- [ ] PWA setup
-- [ ] Performance optimization (caching, search index)
-- [ ] Security audit (visibility rules, role checks)
-- [ ] Production deployment (Vercel + Neon)
-
----
-
-## 11. 🔄 ডেটা ফ্লো ডায়াগ্রাম (DFD সারসংক্ষেপ)
-
+ * Bangla letters must remain completely stable with no layout breakage.
+ * The Question Editor will include options to change Bangla fonts.
+ * Built-in Bangla font selector across the platform.
+### Responsiveness
+ * Mobile-First design (as mobile usage is dominant in Bangladesh).
+ * PWA support.
+ * Question Editor real-time readiness (collaborative-ready).
+## 10. 🚀 Development Phases
+### Phase 1 — Foundation (Weeks 1-2)
+ * [ ] Next.js project setup
+ * [ ] Clerk Auth integration (Google/GitHub/Facebook)
+ * [ ] Onboarding: Account type selection (TEACHER/STUDENT/PARENT)
+ * [ ] Prisma + PostgreSQL setup
+ * [ ] User Profile page
+ * [ ] Organization creation (TEACHER → becomes ORG_PRINCIPAL)
+ * [ ] Teacher add/assign system (subject + class)
+### Phase 2 — Core Question Features (Weeks 3-4)
+ * [ ] Question Bank CRUD (org only)
+ * [ ] AI Question Generator (step-by-step wizard)
+ * [ ] NCTB Curriculum data integration
+ * [ ] Syllabus / Book file upload to AI
+ * [ ] Question Editor (TipTap + shapes + icons)
+ * [ ] AI inline suggestions in editor
+ * [ ] Question export (PDF/DOCX/PNG/MD)
+ * [ ] Visibility control (PUBLIC/SCHOOL/PRIVATE)
+### Phase 3 — Social Features (Weeks 5-6)
+ * [ ] Public Feed (infinite scroll)
+ * [ ] Like / Comment / Share
+ * [ ] Explore page + Search
+ * [ ] Notification system (push)
+ * [ ] STUDENT / PARENT browse flow
+### Phase 4 — Organization Tools (Weeks 7-8)
+ * [ ] Task Management System (CRUD, submit, review, re-assign)
+ * [ ] Task Notifications (mobile/desktop push)
+ * [ ] Notice Board (CRUD, pin, types)
+ * [ ] StreamChat integration (DM + group channel)
+ * [ ] ADMIN/PRINCIPAL badges in chat
+ * [ ] Group message permission control (PRINCIPAL/ADMIN)
+### Phase 5 — Polish & Launch (Weeks 9-10)
+ * [ ] Bangla font stability audit
+ * [ ] Mobile responsive QA
+ * [ ] PWA setup
+ * [ ] Performance optimization (caching, search index)
+ * [ ] Security audit (visibility rules, role checks)
+ * [ ] Production deployment (Vercel + Neon)
+## 11. 🔄 Data Flow Diagram (DFD Summary)
 ```text
                         ┌─────────────────┐
                         │   External User │
@@ -583,8 +502,7 @@ Font           : Plus Jakarta Sans (English) + Kalpurush / Hind Siliguri (Bangla
   │  File Storage (Cloudinary/S3) │
   │  Syllabus, Book files, Images │
   └───────────────────────────────┘
+
 ```
-
----
-
-> **সোর্স অফ ট্রুথ:** এই ফাইলটি `context/features.md` ও DFD ডায়াগ্রামের উপর ভিত্তি করে তৈরি। যেকোনো conflict এ `features.md` প্রাধান্য পাবে।
+> **Source of Truth:** This file is built based on context/features.md and the DFD diagram. In case of any conflict, features.md will take precedence.
+> 
