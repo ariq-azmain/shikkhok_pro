@@ -1,7 +1,7 @@
 // src/app/org/[slug]/dashboard/page.tsx
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useOrgDashboard } from '@/hooks/useOrgDashboard';
 import { OrgStats } from '@/components/org/OrgStats';
 import { OrgMembersList } from '@/components/org/OrgMembersList';
@@ -10,29 +10,61 @@ import { LoadingSpinner } from '@/components/org/LoadingSpinner';
 import { ErrorAlert } from '@/components/org/ErrorAlert';
 import { formatDate, canManageMembers, ORG_TYPE_LABELS } from '@/lib/org/client-utils';
 
-export default function OrgDashboardPage({
-  params,
-}: {
+interface PageProps {
   params: Promise<{ slug: string }>;
-}) {
+}
+
+export default function OrgDashboardPage({ params }: PageProps) {
+  const [orgSlug, setOrgSlug] = useState<string | null>(null);
   const [showAddMember, setShowAddMember] = useState(false);
-  const [slug, setSlug] = useState<string>('');
 
-  // Resolve params
-  params.then((p) => {
-    if (!slug) setSlug(p.slug);
-  });
+  // Resolve params on mount
+  useEffect(() => {
+    params.then((resolvedParams) => {
+      setOrgSlug(resolvedParams.slug);
+    });
+  }, [params]);
 
-  // Get org from slug (placeholder - you'd need an API endpoint for this)
-  const orgId = slug; // This should be resolved from slug first
+  // Show loading while params are resolving
+  if (!orgSlug) {
+    return (
+      <div className="page-bg min-h-screen flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
-  if (!orgId) return <LoadingSpinner />;
+  // Note: You'll need an API endpoint to get orgId from slug
+  // For now, we're using slug as orgId (adjust based on your actual data structure)
+  const { dashboard, loading, error, refetch } = useOrgDashboard(orgSlug);
 
-  const { dashboard, loading, error, refetch } = useOrgDashboard(orgId);
+  if (loading) {
+    return (
+      <div className="page-bg min-h-screen flex items-center justify-center">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
-  if (loading) return <LoadingSpinner />;
-  if (error) return <ErrorAlert error={error} />;
-  if (!dashboard) return <ErrorAlert error="Organization not found" />;
+  if (error) {
+    return (
+      <div className="page-bg min-h-screen py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          <ErrorAlert error={error} />
+        </div>
+      </div>
+    );
+  }
+
+  if (!dashboard) {
+    return (
+      <div className="page-bg min-h-screen py-12 px-4">
+        <div className="max-w-6xl mx-auto">
+          <ErrorAlert error="Organization not found" />
+        </div>
+      </div>
+    );
+  }
 
   const canManage = canManageMembers(dashboard.userRole);
 
@@ -70,7 +102,7 @@ export default function OrgDashboardPage({
         </div>
 
         {/* Stats */}
-        <OrgStats stats={dashboard.stats} />
+        {dashboard.stats && <OrgStats stats={dashboard.stats} />}
 
         {/* Members Section */}
         <div className="space-y-4">
@@ -81,7 +113,7 @@ export default function OrgDashboardPage({
                 onClick={() => setShowAddMember(!showAddMember)}
                 className="org-button-primary"
               >
-                {showAddMember ? 'Cancel' : '➕ Add Member'}
+                {showAddMember ? '✕ Cancel' : '➕ Add Member'}
               </button>
             )}
           </div>
@@ -137,6 +169,27 @@ export default function OrgDashboardPage({
                   </p>
                 </div>
               )}
+            </div>
+          </div>
+        )}
+
+        {/* My Stats (Teacher view) */}
+        {dashboard.myStats && (
+          <div className="space-y-4">
+            <h2 className="text-2xl font-bold text-text-primary">My Statistics</h2>
+            <div className="grid sm:grid-cols-3 gap-4">
+              <div className="org-stat">
+                <div className="org-stat-value">{dashboard.myStats.myQuestions}</div>
+                <div className="org-stat-label">Questions Created</div>
+              </div>
+              <div className="org-stat">
+                <div className="org-stat-value">{dashboard.myStats.assignedTasks}</div>
+                <div className="org-stat-label">Assigned Tasks</div>
+              </div>
+              <div className="org-stat">
+                <div className="org-stat-value">{dashboard.myStats.pendingTasks}</div>
+                <div className="org-stat-label">Pending Tasks</div>
+              </div>
             </div>
           </div>
         )}
